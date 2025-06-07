@@ -16,7 +16,7 @@ async function calculateBazi() {
     try {
         // 向 Netlify Function 后端服务发送 POST 请求
         // URL 现在指向您的 Netlify Function，它是相对于您的网站根目录的路径
-        const response = await fetch('/.netlify/functions/calculateBazi', {
+        const response = await fetch('/api/calculateBazi', {
             method: 'POST', // 指定请求方法为 POST
             headers: {
                 'Content-Type': 'application/json' // 告诉服务器我们发送的是 JSON 数据
