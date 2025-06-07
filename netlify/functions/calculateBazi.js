@@ -73,7 +73,46 @@ exports.handler = async (event, context) => {
         // 核心计算逻辑 (从 script.js 移动到这里，因为它现在在后端)
         const birthDate = new Date(year, month - 1, day, hour, 0, 0);
         const lunarDate = lunar.Lunar.fromDate(birthDate);
+// lunar.js 在项目根目录，所以从 netlify/functions 引用需要 ../../lunar
+const lunar = require('../../lunar');
 
+// ... (其他常量和函数代码保持不变) ...
+
+exports.handler = async (event, context) => {
+    // ... (前面的请求处理代码保持不变) ...
+
+    try {
+        const birthDate = new Date(year, month - 1, day, hour, 0, 0);
+        const lunarDate = lunar.Lunar.fromDate(birthDate);
+
+        // --- 在这里添加调试日志 START ---
+        console.log('DEBUG: typeof lunarDate:', typeof lunarDate);
+        console.log('DEBUG: lunarDate object (truncated):', JSON.stringify(lunarDate).substring(0, 500)); // 打印部分内容，避免日志过长
+        if (lunarDate) {
+            console.log('DEBUG: Keys of lunarDate:', Object.keys(lunarDate));
+            console.log('DEBUG: Prototype properties of lunarDate:', Object.getOwnPropertyNames(Object.getPrototypeOf(lunarDate)));
+        } else {
+            console.log('DEBUG: lunarDate is null or undefined.');
+        }
+        // --- 在这里添加调试日志 END ---
+
+        // 获取八字四柱
+        const ganZhiYear = lunarDate.get2GanZhi().getYear(); // 这就是出错的行
+        const ganZhiMonth = lunarDate.get2GanZhi().getMonth();
+        const ganZhiDay = lunarDate.get2GanZhi().getDay();
+        const ganZhiHour = lunarDate.get2GanZhi().getHour();
+
+        // ... (剩余的八字计算和分析代码保持不变) ...
+
+    } catch (error) {
+        console.error('八字计算过程中发生错误:', error);
+        return {
+            statusCode: 500,
+            headers: headers,
+            body: JSON.stringify({ message: '计算过程中发生服务器错误。' }),
+        };
+    }
+};
         // 获取八字四柱
         const ganZhiYear = lunarDate.get2GanZhi().getYear();
         const ganZhiMonth = lunarDate.get2GanZhi().getMonth();
