@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金木水火土</title>
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 确保不显示之前可能的语言切换器 */
+        .language-switcher {
+            display: none;
+        }
+
+        /* 确保 Google 翻译小部件在页面中居中显示 */
+        #google_translate_element {
+            text-align: center;
+            margin-bottom: 10px;
+            padding-top: 10px;
+        }
+
+        /* 静态图片容器样式 - 默认可见 */
+        #bagua-static-container { 
+            text-align: center;
+            margin: 20px auto; 
+            width: 200px; /* 根据你的图片大小调整 */
+            height: 200px; /* 根据你的图片大小调整 */
+        }
+
+        #bagua-static-container img {
+            max-width: 100%; /* 确保图片不会溢出容器 */
+            height: auto; /* 保持图片比例 */
+            display: block; /* 移除图片底部空白 */
+            margin: 0 auto; /* 居中图片 */
+        }
+
+        /* 动态八卦图容器样式 - 默认隐藏 (即使现在没有动态图，也要保留这部分CSS) */
+        #bagua-dynamic-container { 
+            text-align: center;
+            margin: 20px auto;
+            width: 200px; /* 根据你的SVG宽度调整 */
+            height: 200px; /* 根据你的SVG高度调整 */
+            display: none; /* 默认隐藏，等待JS激活 */
+        }
+
+        /* 辅助类，用于JS控制显示/隐藏 */
+        .hidden {
+            display: none !important; 
+        }
+        .visible {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="google_translate_element"></div>
+
+    <div class="container">
+        <h1>金木水火土</h1>
+
+        <div id="bagua-static-container">
+            <img src="images/bagua-static.png" alt="八卦图">
+        </div>
+
+        <div id="bagua-dynamic-container">
+            </svg> 
+        </div>
+
+        <div class="input-section">
+            <label for="year">出生年份 (公历):</label>
+            <input type="number" id="year" placeholder="例如: 1990" min="1900" max="2100">
+
+            <label for="month">出生月份 (公历):</label>
+            <input type="number" id="month" placeholder="1-12" min="1" max="12">
+
+            <label for="day">出生日期 (公历):</label>
+            <input type="number" id="day" placeholder="1-31" min="1" max="31">
+
+            <label for="hour">出生时辰 (24小时制):</label>
+            <input type="number" id="hour" placeholder="0-23" min="0" max="23">
+
+            <button id="calculateBtn">开始分析</button>
+        </div>
+
+        <div class="output-section">
+            <h2>您的八字:</h2>
+            <p id="baziOutput">等待输入...</p>
+        </div>
+
+        <div class="output-section">
+            <h2>五行分布:</h2>
+            <div class="wuxing-counts">
+                <p>金: <span id="metalCount">0</span></p>
+                <p>木: <span id="woodCount">0</span></p>
+                <p>水: <span id="waterCount">0</span></p>
+                <p>火: <span id="fireCount">0</span></p>
+                <p>土: <span id="earthCount">0</span></p>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <h2>简要分析:</h2>
+            <p id="analysisOutput">请输入您的出生信息，点击“开始分析”</p>
+        </div>
+    </div>
+
+    <script src="lunar.js"></script>
+    <script src="script.js"></script>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'zh', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script src="bagua-animation.js"></script> 
+
+</body>
+</html>
