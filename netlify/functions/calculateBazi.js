@@ -1,5 +1,5 @@
 // lunar.js 在项目根目录，所以从 netlify/functions 引用需要 ../../lunar
-const lunar = require('../../lunar');
+const lunar = require('./lunar'); // 将 '..' 改为 '.'
 
 // 天干地支与五行映射表 (从 script.js 移动到后端函数，确保后端有完整逻辑)
 const TIAN_GAN_WU_XING = {
@@ -86,14 +86,7 @@ exports.handler = async (event, context) => {
         const lunarDate = lunar.Lunar.fromDate(birthDate);
 
         // --- 在这里添加调试日志 START ---
-        console.log('DEBUG: typeof lunarDate:', typeof lunarDate);
-        console.log('DEBUG: lunarDate object (truncated):', JSON.stringify(lunarDate).substring(0, 500)); // 打印部分内容，避免日志过长
-        if (lunarDate) {
-            console.log('DEBUG: Keys of lunarDate:', Object.keys(lunarDate));
-            console.log('DEBUG: Prototype properties of lunarDate:', Object.getOwnPropertyNames(Object.getPrototypeOf(lunarDate)));
-        } else {
-            console.log('DEBUG: lunarDate is null or undefined.');
-        }
+        
         // --- 在这里添加调试日志 END ---
 
         // 获取八字四柱
