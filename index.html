@@ -34,46 +34,38 @@
             margin: 0 auto; /* 居中图片 */
         }
 
-        /* 动态八卦图容器样式 - 默认隐藏 (即使现在没有动态图，也要保留这部分CSS) */
-        #bagua-dynamic-container { 
+        /* 动态八卦图容器样式 - 默认隐藏 (即使现在没有动态图，也要保留这些样式) */
+        #bagua-dynamic-container {
+            display: none; 
             text-align: center;
             margin: 20px auto;
-            width: 200px; /* 根据你的SVG宽度调整 */
-            height: 200px; /* 根据你的SVG高度调整 */
-            display: none; /* 默认隐藏，等待JS激活 */
+            width: 200px; /* 根据你的图片大小调整 */
+            height: 200px; /* 根据你的图片大小调整 */
+            /* 在这里添加更多动态图的样式，如果需要 */
         }
 
-        /* 辅助类，用于JS控制显示/隐藏 */
-        .hidden {
-            display: none !important; 
+        /* 隐藏原始的 Google 翻译工具栏 */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
         }
-        .visible {
-            display: block !important;
+        body {
+            top: 0px !important;
         }
     </style>
 </head>
 <body>
-    <div id="google_translate_element"></div>
-
     <div class="container">
-        <h1>金木水火土</h1>
-
-        <div id="bagua-static-container">
-            <img src="images/bagua-static.png" alt="八卦图">
-        </div>
-
-        <div id="bagua-dynamic-container">
-            </svg> 
-        </div>
+        <h1>金木水火土 八字测算</h1>
+        <div id="google_translate_element"></div>
 
         <div class="input-section">
-            <label for="year">出生年份 (公历):</label>
-            <input type="number" id="year" placeholder="例如: 1990" min="1900" max="2100">
+            <label for="year">出生年份:</label>
+            <input type="number" id="year" placeholder="如 1990" min="1900" max="2100">
 
-            <label for="month">出生月份 (公历):</label>
+            <label for="month">出生月份:</label>
             <input type="number" id="month" placeholder="1-12" min="1" max="12">
 
-            <label for="day">出生日期 (公历):</label>
+            <label for="day">出生日期:</label>
             <input type="number" id="day" placeholder="1-31" min="1" max="31">
 
             <label for="hour">出生时辰 (24小时制):</label>
@@ -104,7 +96,8 @@
         </div>
     </div>
 
-    <script src="api/lunar.js"></script>
+    <script src="js/lunar.js"></script>
+    <script src="js/calculateBazi.js"></script> 
     <script src="script.js"></script>
 
     <script type="text/javascript">
@@ -114,7 +107,5 @@
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    <script src="bagua-animation.js"></script> 
-
-</body><p>测试版本：2025年6月7日aoogoost更新！</p>
+</body>
 </html>
