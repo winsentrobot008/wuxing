@@ -2,14 +2,23 @@
 // script.js - Contains only frontend UI logic, no full lunar.js or calculateBazi.js code
 
 document.getElementById('calculateBtn').addEventListener('click', function() {
-    const year = document.getElementById('year').value;
-    const month = document.getElementById('month').value;
-    const day = document.getElementById('day').value;
-    const hour = document.getElementById('hour').value;
+    const yearInput = document.getElementById('year').value;
+    const monthInput = document.getElementById('month').value;
+    const dayInput = document.getElementById('day').value;
+    const hourInput = document.getElementById('hour').value;
     
-    // 简单的输入验证
-    if (!year || !month || !day || hour === '') {
-        alert('请填写完整的出生日期和时辰！');
+    // 改进的输入验证：检查是否为有效数字及范围
+    const year = parseInt(yearInput);
+    const month = parseInt(monthInput);
+    const day = parseInt(dayInput);
+    const hour = parseInt(hourInput);
+
+    if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) ||
+        year < 1900 || year > 2100 || // 示例范围，可根据需要调整
+        month < 1 || month > 12 ||
+        day < 1 || day > 31 || // 简单验证，更严格的日期验证应考虑月份和闰年
+        hour < 0 || hour > 23) {
+        alert('请填写有效的出生日期和时辰！\n年份应在1900-2100之间，月份1-12，日期1-31，时辰0-23。');
         return;
     }
 
@@ -18,22 +27,31 @@ document.getElementById('calculateBtn').addEventListener('click', function() {
         // 确保lunar.js和calculateBazi.js已在index.html中正确加载
         // Solar, Lunar, EightChar 对象由 lunar.js 全局暴露
         const solar = Solar.fromYmdHms(
-            parseInt(year),
-            parseInt(month),
-            parseInt(day),
-            parseInt(hour),
+            year,
+            month,
+            day,
+            hour,
             0, // 分钟，根据您的需求可以从输入获取
             0  // 秒，根据您的需求可以从输入获取
         );
+
+        // 获取Lunar对象
         const lunar = solar.getLunar();
+        
+        // 获取EightChar对象
         const eightChar = lunar.getEightChar();
 
+        // 检查 eightChar 是否成功获取
+        if (!eightChar) {
+            // 如果 eightChar 为空或无效，抛出错误
+            throw new Error('无法获取八字信息，请检查输入的日期和时间是否有效且在合理范围内。');
+        }
+
         // 调用 calculateBazi.js 中定义的函数
-        // 确保 calculateBazi 函数被正确定义并暴露在全局或通过模块化方式可访问
         const baziData = calculateBazi(eightChar); 
 
         // 更新页面上的八字信息
-        document.getElementById('baziOutput').innerText = baziData.baziString; // 假设baziData有一个baziString属性
+        document.getElementById('baziOutput').innerText = baziData.baziString; 
 
         // 更新五行计数
         document.getElementById('metalCount').innerText = baziData.wuxingCounts.metal;
@@ -52,14 +70,3 @@ document.getElementById('calculateBtn').addEventListener('click', function() {
         document.getElementById('analysisOutput').innerText = '计算失败';
     }
 });
-
-// 如果您有其他关于八卦动画的JavaScript逻辑，可以放在这里
-// 例如：
-// const baguaAnimation = {
-//     update: function(baziInfo) {
-//         console.log("更新八卦动画:", baziInfo);
-//         document.getElementById('bagua-static-container').style.display = 'none';
-//         document.getElementById('bagua-dynamic-container').style.display = 'block';
-//         // 实际的动画渲染代码...
-//     }
-// };
