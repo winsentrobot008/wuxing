@@ -1,4 +1,4 @@
-// lunar.js 文件的完整内容
+// lunar.js 文件的完整内容 - 包含修复了的 _initLunarInfo 逻辑
 ;(function(root,factory){
   if (typeof define==='function'&&define.amd){
     define(factory);
@@ -40,7 +40,7 @@
     };
     var _fromYmdHms = function(year,month,day,hour,minute,second){
       var date = new Date(year,month-1,day,hour,minute,second);
-      date.setFullYear(year);
+      date.setFullYear(year); // Ensure full year is set for years before 100 AD if needed
       return new Solar(date.getFullYear(),date.getMonth()+1,date.getDate(),date.getHours(),date.getMinutes(),date.getSeconds());
     };
     var _fromYmd = function(year,month,day){
@@ -158,9 +158,10 @@
       '亥':['壬','甲']
     };
 
+    // 农历每月天数 (简化的数据，不完全准确，实际农历很复杂)
     var _LUNAR_MONTH = [
-      [30,29,30,29,30,29,30,29,30,29,30,29],
-      [29,30,29,30,29,30,29,30,29,30,29,30]
+      [30,29,30,29,30,29,30,29,30,29,30,29], // 平年
+      [29,30,29,30,29,30,29,30,29,30,29,30]  // 闰年 (这里简化为固定模式，不代表真实闰月计算)
     ];
 
     var _JIE_QI_NAMES = [
@@ -174,18 +175,20 @@
       if (_LUNAR_INFO) {
         return;
       }
-      _LUNAR_INFO = [];
+      _LUNAR_INFO = []; // 用于存储所有公历日期对应的农历信息
       var year = 1900;
       var month = 1;
       var day = 1;
-      var offset = 0;
       var date = new Date(year,month-1,day);
+
+      // 第一步：初始化 _LUNAR_INFO 数组，填充每个公历日期的基本信息 (Solar, JulianDay, DayGanZhi)
       while(year <= 2100) {
         var solar = Solar.fromDate(date);
         var julianDay = solar.toJulianDay();
-        var i = year - 1900;
-        var j = month - 1;
-        var k = day - 1;
+        var i = year - 1900; // 公历年份偏移
+        var j = month - 1;   // 公历月份索引
+        var k = day - 1;     // 公历日期索引
+
         if (!_LUNAR_INFO[i]) {
           _LUNAR_INFO[i] = [];
         }
@@ -195,7 +198,7 @@
         _LUNAR_INFO[i][j][k] = {
           'solar': solar,
           'julianDay': julianDay,
-          'ganZhi': _getGanZhiByJulianDay(julianDay + offset),
+          'ganZhi': _getGanZhiByJulianDay(julianDay), // 修复：移除了不必要的 '+ offset'
           'week': solar.getWeek(),
           'jieQi': null,
           'nextJieQi': null,
@@ -215,63 +218,82 @@
           'lunarDayGanZhi': null,
           'lunarTimeGanZhi': null,
         };
-        offset += 1;
         date.setDate(date.getDate()+1);
         year = date.getFullYear();
         month = date.getMonth()+1;
         day = date.getDate();
       }
-      for (i=1900; i<=2100; i++) {
-        var leap = _getLeapMonth(i);
-        var days = _getLunarMonthDays(i);
-        var currentLunarDay = 1;
-        var currentLunarMonth = 1;
-        var currentLunarYear = i;
-        var currentJieQiIndex = 0;
-        var lastJieQiJulianDay = 0;
 
-        for (j=0; j<12; j++) {
-          var solarMonthDays = days[j];
-          if (j == leap - 1) { // 闰月
-            solarMonthDays = _getLunarMonthDays(i,true)[j];
-          }
+      // 第二步：遍历已填充的公历日期，计算并设置其对应的农历信息及四柱八字
+      var currentLunarYear = 1900;
+      var currentLunarMonth = 1;
+      var currentLunarDay = 1;
+      var isLeapMonth = false;
+      var currentJieQiIndex = 0; // 用于节气计算
 
-          for (k=0; k<solarMonthDays; k++) {
-            var solar = _LUNAR_INFO[i-1900][j][k]['solar'];
-            var julianDay = _LUNAR_INFO[i-1900][j][k]['julianDay'];
-            var info = _LUNAR_INFO[i-1900][solar.getMonth()-1][solar.getDay()-1];
+      // 为了简化，这里使用一个粗略的农历日期推进逻辑
+      // 实际的农历计算涉及复杂的朔望月、节气等，此处的简化可能导致不完全精确
+      for (year = 1900; year <= 2100; year++) {
+        var leapMonth = _getLeapMonth(year); // 简化的闰月计算，可能不准确
+        var lunarMonthDaysArr = _getLunarMonthDays(year, false); // 简化的农历月天数，可能不准确
+        var lunarLeapMonthDaysArr = _getLunarMonthDays(year, true); // 简化的闰月天数
 
-            info.isLeap = (j == leap-1);
+        for (month = 1; month <= 12; month++) { // 公历月份
+          var solarMonthDays = new Date(year, month, 0).getDate(); // 获取当月实际天数
+          for (day = 1; day <= solarMonthDays; day++) { // 公历日期
+            var solar = Solar.fromYmdHms(year, month, day, 0, 0, 0); // 创建当前公历日期对象
+            var info = _LUNAR_INFO[year-1900][month-1][day-1]; // 获取对应的缓存条目
+
+            if (!info) {
+              // 理论上不会发生，因为第一步已经填充了所有日期
+              continue;
+            }
+
+            // 更新农历日期 (这是一个非常简化的逻辑，不完全准确)
             info.lunarYear = currentLunarYear;
             info.lunarMonth = currentLunarMonth;
             info.lunarDay = currentLunarDay;
-            info.lunarYearGanZhi = _getYearGanZhi(info.solar);
-            info.lunarMonthGanZhi = _getMonthGanZhi(info.solar);
-            info.lunarDayGanZhi = _getDayGanZhi(info.solar);
-            info.lunarTimeGanZhi = _getTimeGanZhi(info.solar);
+            info.isLeap = isLeapMonth;
 
-            var jieQiJulianDay = _getJieQiJulianDay(i, currentJieQiIndex);
-            if (julianDay >= jieQiJulianDay) {
+            // 计算年干支、月干支、日干支、时干支
+            info.lunarYearGanZhi = _getYearGanZhi(solar);
+            info.lunarMonthGanZhi = _getMonthGanZhi(solar);
+            info.lunarDayGanZhi = _getDayGanZhi(solar);
+            info.lunarTimeGanZhi = _getTimeGanZhi(solar);
+
+            // 节气计算
+            var jieQiJulianDay = _getJieQiJulianDay(year, currentJieQiIndex);
+            if (solar.toJulianDay() >= jieQiJulianDay) {
               info.jieQi = _JIE_QI_NAMES[currentJieQiIndex];
-              lastJieQiJulianDay = jieQiJulianDay;
+              // 推进到下一个节气
               currentJieQiIndex = (currentJieQiIndex + 1) % _JIE_QI_NAMES.length;
             }
             info.nextJieQi = _JIE_QI_NAMES[currentJieQiIndex];
-            info.nextJieQiJulianDay = _getJieQiJulianDay(i, currentJieQiIndex);
+            info.nextJieQiJulianDay = _getJieQiJulianDay(year, currentJieQiIndex);
             info.prevJieQi = _JIE_QI_NAMES[(currentJieQiIndex + _JIE_QI_NAMES.length - 1) % _JIE_QI_NAMES.length];
-            info.prevJieQiJulianDay = lastJieQiJulianDay;
+            info.prevJieQiJulianDay = _getJieQiJulianDay(year, (currentJieQiIndex + _JIE_QI_NAMES.length - 1) % _JIE_QI_NAMES.length); // 修正前一个节气的儒略日
 
+            // 推进农历日期（简化的方式，实际情况复杂得多）
             currentLunarDay++;
+            var daysInCurrentLunarMonth = isLeapMonth ? lunarLeapMonthDaysArr[currentLunarMonth - 1] : lunarMonthDaysArr[currentLunarMonth - 1];
+            if (currentLunarDay > daysInCurrentLunarMonth) {
+                currentLunarDay = 1;
+                currentLunarMonth++;
+                if (currentLunarMonth > 12) {
+                    currentLunarMonth = 1;
+                    currentLunarYear++;
+                }
+                // 这里需要更复杂的逻辑来判断是否进入闰月
+                // 目前的 _getLeapMonth 总是返回 0，所以闰月逻辑不会触发
+            }
           }
-          currentLunarDay = 1;
-          currentLunarMonth++;
         }
       }
     };
 
     var _getGanZhiByJulianDay = function(julianDay){
       var offset = julianDay - 263595; // 1900年1月1日甲子日
-      return _LIU_SHI_JIA_ZI[offset % 60];
+      return _LIU_SHI_JIA_ZI[Math.floor(offset) % 60]; // 确保 offset 是整数
     };
 
     var _getJieQiJulianDay = function(year, index){
@@ -280,17 +302,13 @@
       return D * 365.2422 + _JIE_QI_BASE_OFFSET + T;
     };
 
+    // 简化的闰月计算，实际农历闰月计算复杂
     var _getLeapMonth = function(year){
-      var n = year - 1900;
-      var arr = [0,0,0,0,0,0,0,0,0,0,0,0];
-      if (n >= 0 && n < _LUNAR_MONTH[0].length) {
-        return arr[n % 2];
-      }
-      return 0; // 暂未实现闰月计算
+      return 0; // 暂未实现准确的闰月计算，始终返回无闰月
     };
 
+    // 简化的农历每月天数获取
     var _getLunarMonthDays = function(year, isLeap){
-      var n = year - 1900;
       if (isLeap) {
         return _LUNAR_MONTH[1];
       }
@@ -298,6 +316,8 @@
     };
 
     var _getYearGanZhi = function(solar){
+      // 立春是农历年的开始，这里需要根据立春来确定年干支
+      // 这里的实现是基于公历年份，而非节气，所以可能不精确
       var year = solar.getYear();
       var ganIndex = (year - 4) % 10;
       var zhiIndex = (year - 4) % 12;
@@ -305,10 +325,12 @@
     };
 
     var _getMonthGanZhi = function(solar){
+      // 月干支以节为界，非农历初一
       var yearGan = _getYearGanZhi(solar).substring(0,1);
+      // 这里需要根据节气来计算月干支，简化为按公历月计算
       var month = solar.getMonth();
       var ganIndex = (_HEAVEN_GAN.indexOf(_MONTH_GAN_MAP[yearGan][Math.floor((month - 1) / 3)]) + (month - 1) % 3 * 2) % 10;
-      var zhiIndex = (month + 1) % 12; // 地支的月序从寅月开始，这里直接用月份计算
+      var zhiIndex = (month + 1) % 12; // 地支的月序从寅月开始 (立春所在月)，这里直接用月份计算不准确
       return _HEAVEN_GAN[ganIndex] + _EARTH_ZHI[zhiIndex];
     };
 
@@ -326,7 +348,7 @@
       } else {
         timeZhiIndex = timeZhiIndex - 1;
       }
-      var timeGanIndex = (_HEAVEN_GAN.indexOf(dayGan) * 2 + timeZhiIndex) % 10; // 这是基于天干地支相生相克规律的计算方式，可能需要更精确的查找表
+      var timeGanIndex = (_HEAVEN_GAN.indexOf(dayGan) * 2 + timeZhiIndex) % 10;
       return _HEAVEN_GAN[timeGanIndex] + _EARTH_ZHI[timeZhiIndex];
     };
 
@@ -341,8 +363,14 @@
     }
 
     Lunar.fromSolar = function(solar){
-      _initLunarInfo();
+      _initLunarInfo(); // 确保数据已初始化
       var info = _LUNAR_INFO[solar.getYear()-1900][solar.getMonth()-1][solar.getDay()-1];
+      if (!info) {
+          // 如果传入的公历日期超出1900-2100范围，或者其他原因导致无法获取信息
+          console.error("无法从缓存中获取农历信息，可能日期超出范围或未初始化:", solar);
+          // 可以选择抛出错误或返回一个默认/空的Lunar对象
+          throw new Error("指定日期[" + solar.toYmdHms() + "]的农历信息超出支持范围(1900-2100)或未找到。");
+      }
       return new Lunar(info.lunarYear,info.lunarMonth,info.lunarDay,solar.getHour(),solar.getMinute(),solar.getSecond(),info.isLeap);
     };
 
@@ -354,6 +382,7 @@
     Lunar.prototype.getSecond = function(){return this.second;};
     Lunar.prototype.isLeapMonth = function(){return this.isLeap;};
 
+    // 以下获取干支的方法直接从缓存中获取，因为 _initLunarInfo 已经计算并存储了
     Lunar.prototype.getYearGan = function(){return this.getYearGanZhi().substring(0,1);};
     Lunar.prototype.getYearZhi = function(){return this.getYearGanZhi().substring(1);};
     Lunar.prototype.getMonthGan = function(){return this.getMonthGanZhi().substring(0,1);};
@@ -366,22 +395,22 @@
     Lunar.prototype.getYearGanZhi = function(){
       _initLunarInfo();
       var info = _LUNAR_INFO[this.getSolar().getYear()-1900][this.getSolar().getMonth()-1][this.getSolar().getDay()-1];
-      return info.lunarYearGanZhi;
+      return info ? info.lunarYearGanZhi : '';
     };
     Lunar.prototype.getMonthGanZhi = function(){
       _initLunarInfo();
       var info = _LUNAR_INFO[this.getSolar().getYear()-1900][this.getSolar().getMonth()-1][this.getSolar().getDay()-1];
-      return info.lunarMonthGanZhi;
+      return info ? info.lunarMonthGanZhi : '';
     };
     Lunar.prototype.getDayGanZhi = function(){
       _initLunarInfo();
       var info = _LUNAR_INFO[this.getSolar().getYear()-1900][this.getSolar().getMonth()-1][this.getSolar().getDay()-1];
-      return info.lunarDayGanZhi;
+      return info ? info.lunarDayGanZhi : '';
     };
     Lunar.prototype.getTimeGanZhi = function(){
       _initLunarInfo();
       var info = _LUNAR_INFO[this.getSolar().getYear()-1900][this.getSolar().getMonth()-1][this.getSolar().getDay()-1];
-      return info.lunarTimeGanZhi;
+      return info ? info.lunarTimeGanZhi : '';
     };
 
     Lunar.prototype.getShengXiao = function(){
@@ -394,25 +423,30 @@
     };
 
     Lunar.prototype.getSolar = function(){
-      var solar = Solar.fromYmdHms(this.year,this.month,this.day,this.hour,this.minute,this.second);
-      // Need to adjust to find the actual solar date corresponding to this lunar date
-      // This is a simplified approach, a more robust implementation would involve iterative search or precomputed tables
+      // 为了获取农历日期对应的公历日期，需要反向查找或通过迭代
+      // 这里的实现是一个简化的迭代查找，效率可能不高
+      var targetYear = this.year;
+      var targetMonth = this.month;
+      var targetDay = this.day;
+      var targetIsLeap = this.isLeap;
+
       _initLunarInfo();
-      for(var i=0; i<366; i++) { // Max days in a year
-        var d = new Date(solar.getYear(), solar.getMonth()-1, solar.getDay()+i);
-        var tempSolar = Solar.fromDate(d);
-        var info = _LUNAR_INFO[tempSolar.getYear()-1900][tempSolar.getMonth()-1][tempSolar.getDay()-1];
-        if (info.lunarYear === this.year && info.lunarMonth === this.month && info.lunarDay === this.day && info.isLeap === this.isLeap) {
-          return tempSolar;
-        }
-        d = new Date(solar.getYear(), solar.getMonth()-1, solar.getDay()-i);
-        tempSolar = Solar.fromDate(d);
-        info = _LUNAR_INFO[tempSolar.getYear()-1900][tempSolar.getMonth()-1][tempSolar.getDay()-1];
-        if (info.lunarYear === this.year && info.lunarMonth === this.month && info.lunarDay === this.day && info.isLeap === this.isLeap) {
-          return tempSolar;
-        }
+
+      // 从当前日期前后几天查找，优化查找范围
+      var searchDate = Solar.fromYmdHms(targetYear, targetMonth, targetDay, this.hour, this.minute, this.second);
+      for(var i = -30; i <= 30; i++) { // 查找前后30天
+          var d = new Date(searchDate.getYear(), searchDate.getMonth() - 1, searchDate.getDay() + i, searchDate.getHour(), searchDate.getMinute(), searchDate.getSecond());
+          var tempSolar = Solar.fromDate(d);
+          if (tempSolar.getYear() < 1900 || tempSolar.getYear() > 2100) continue; // 确保在支持范围内
+
+          var info = _LUNAR_INFO[tempSolar.getYear()-1900][tempSolar.getMonth()-1][tempSolar.getDay()-1];
+          if (info && info.lunarYear === targetYear && info.lunarMonth === targetMonth && info.lunarDay === targetDay && info.isLeap === targetIsLeap) {
+              return tempSolar;
+          }
       }
-      return solar; // Fallback
+      // 如果精确查找失败，退回到一个默认的公历日期，这可能不准确
+      console.warn("未能精确找到农历日期对应的公历日期，返回近似值。农历:", targetYear, targetMonth, targetDay, "是否闰月:", targetIsLeap);
+      return Solar.fromYmdHms(targetYear,targetMonth,targetDay,this.hour,this.minute,this.second);
     };
     return Lunar;
   })();
@@ -525,6 +559,8 @@
     return Pillar;
   })();
 
+  // 这里的 Util 类在你的八字计算中没有直接使用，且其内部的 _arrays, _dictString 等并未在当前代码中初始化
+  // 因此，它可能无法正常工作，但在不影响核心八字计算的情况下，暂时保留。
   var Util = (function(){
     var _MESSAGE = {};
     var _defaultLang = 'zh';
@@ -612,6 +648,6 @@
     Lunar:Lunar,
     EightChar:EightChar,
     Pillar:Pillar,
-    Util:Util
+    Util:Util // 这里的 Util 可能需要更多的初始化来正常工作
   };
 });
