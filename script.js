@@ -23,9 +23,7 @@ document.getElementById('calculateBtn').addEventListener('click', function() {
     }
 
     try {
-        // 使用lunar.js和calculateBazi.js进行计算
-        // 确保lunar.js和calculateBazi.js已在index.html中正确加载
-        // Solar, Lunar, EightChar 对象由 lunar.js 全局暴露
+        // 使用lunar.js进行计算
         const solar = Solar.fromYmdHms(
             year,
             month,
@@ -35,16 +33,15 @@ document.getElementById('calculateBtn').addEventListener('click', function() {
             0  // 秒，根据您的需求可以从输入获取
         );
 
-        // 获取Lunar对象
         const lunar = solar.getLunar();
-        
-        // 获取EightChar对象
         const eightChar = lunar.getEightChar();
 
-        // 检查 eightChar 是否成功获取
-        if (!eightChar) {
-            // 如果 eightChar 为空或无效，抛出错误
-            throw new Error('无法获取八字信息，请检查输入的日期和时间是否有效且在合理范围内。');
+        // **增强的八字对象检查**
+        // 检查 eightChar 是否存在，并且它是否具有 getHourGan 方法（作为有效性的一个标志）
+        if (!eightChar || typeof eightChar.getHourGan !== 'function') {
+            // 在这里将八字对象打印到控制台，这对于调试非常重要！
+            console.error('`eightChar` 对象无效或缺少方法:', eightChar); 
+            throw new Error('无法获取有效的八字信息。请检查输入的出生日期和时间，确保其在合理范围内。或联系管理员提供此错误信息。');
         }
 
         // 调用 calculateBazi.js 中定义的函数
