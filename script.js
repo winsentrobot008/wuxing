@@ -34,8 +34,8 @@ function calculateWuXing() {
     const dayGanZhi = lunar.getDayInGanZhi();
     const hourGanZhi = lunar.getTimeInGanZhi();
 
-    // 时辰中文名称
-    const timeZhi = lunar.getTimeZhi(); // 获取时辰地支（如 "子"）
+    // 时辰中文
+    const timeZhi = lunar.getTimeZhi();
     const timeNames = {
       '子': '子时 (23:00-01:00)',
       '丑': '丑时 (01:00-03:00)',
@@ -50,9 +50,9 @@ function calculateWuXing() {
       '戌': '戌时 (19:00-21:00)',
       '亥': '亥时 (21:00-23:00)'
     };
-    const timeChinese = timeNames[timeZhi] || timeZhi;
+    const timeChinese = timeNames[timeZhi || timeZhi];
 
-    // 五行对照表（只基于天干）
+    // 五行映射
     const wuXingMap = {
       '甲': '木', '乙': '木',
       '丙': '火', '丁': '火',
@@ -69,10 +69,10 @@ function calculateWuXing() {
 
     // 计算五行
     const wuXing = {
-      year: wuXingMap[yearGan] || '未知',
-      month: wuXingMap[monthGan] || '未知',
-      day: wuXingMap[dayGan] || '未知',
-      hour: wuXingMap[hourGan] || '未知'
+      year: wuXingMap[yearGan] || '未知';
+      monthGanZhi = wuXingMap[monthGan] || '未知';
+      dayGanZhi = wuXingMap[dayGan] || '未知';
+      hourGanZhi = wuXingMap[hourGan] || '未知';
     };
 
     // 统计五行分布
