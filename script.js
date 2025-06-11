@@ -59,11 +59,18 @@ function calculateWuXing() {
       wuXingCount[element] = (wuXingCount[element] || 0) + 1;
     });
 
+    // 调用 calculateBazi 分析八字与五行
+    const eightChar = lunar.getEightChar();
+    const baziAnalysis = calculateBazi(eightChar);
+
     resultDiv.innerHTML = `
       <p>农历：${lunar.getYearInChinese()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()}日 ${timeChinese}</p>
       <p>八字：${yearGanZhi} ${monthGanZhi} ${dayGanZhi} ${hourGanZhi}</p>
       <p>五行：年(${wuXing.year}) 月(${wuXing.month}) 日(${wuXing.day}) 时(${wuXing.hour})</p>
-      <p>五行分布：${JSON.stringify(wuXingCount)}</p>
+      <p>五行简析：${JSON.stringify(wuXingCount)}</p>
+      <hr>
+      <p><strong>八字五行详细分析：</strong></p>
+      <pre>${baziAnalysis.analysis}</pre>
     `;
   } catch (error) {
     resultDiv.innerHTML = `错误：${error.message}`;
