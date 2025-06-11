@@ -1,67 +1,90 @@
+/* 全局样式 */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Adjust alignment to start from top */
+    align-items: flex-start;
     min-height: 100vh;
-    margin: 20px;
+    margin: 0;
+    padding: 20px;
     box-sizing: border-box;
 }
 
+/* 容器样式 */
 .container {
     background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
+    max-width: 700px;
     text-align: center;
+    transition: transform 0.3s ease;
 }
 
+.container:hover {
+    transform: translateY(-5px);
+}
+
+/* 标题样式 */
 h1, h2 {
     color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
 }
 
+/* 输入组样式 */
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     text-align: left;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    margin-bottom: 8px;
+    font-weight: 500;
     color: #555;
 }
 
-.input-group input[type="number"] {
-    width: calc(100% - 20px);
-    padding: 10px;
+.input-group input[type="number"],
+.input-group input[type="date"] {
+    width: 100%;
+    padding: 12px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 16px;
+    transition: border-color 0.3s ease;
 }
 
+.input-group input[type="number"]:focus,
+.input-group input[type="date"]:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* 按钮样式 */
 button {
     background-color: #4CAF50;
     color: white;
-    padding: 12px 20px;
+    padding: 14px 24px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 18px;
     margin-top: 20px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 button:hover {
     background-color: #45a049;
+    transform: scale(1.05);
 }
 
+/* 结果样式 */
 .results {
-    margin-top: 30px;
-    padding-top: 20px;
+    margin-top: 40px;
+    padding-top: 30px;
     border-top: 1px solid #eee;
     text-align: left;
 }
@@ -69,7 +92,7 @@ button:hover {
 .results p, .results ul {
     font-size: 16px;
     color: #333;
-    line-height: 1.6;
+    line-height: 1.8;
 }
 
 .results ul {
@@ -78,29 +101,32 @@ button:hover {
 }
 
 .results ul li {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 
 #analysisOutput {
     font-style: italic;
     color: #007BFF;
 }
-/* --- 八卦图动画样式 --- */
+
+/* 八卦图容器样式 */
 .bagua-container {
     text-align: center;
-    margin: 20px 0;
+    margin: 30px 0;
 }
 
+/* 八卦图样式 */
 .bagua-circle {
-    width: 100px; /* 控制大小 */
-    height: 100px; /* 控制大小 */
-    border-radius: 50%; /* 圆形 */
-    border: 2px solid #333; /* 边框 */
-    display: inline-block; /* 居中显示 */
-    background: linear-gradient(to right, black 50%, white 50%); /* 阴阳鱼的黑白 */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #333;
+    display: inline-block;
+    background: linear-gradient(to right, black 50%, white 50%);
     position: relative;
     overflow: hidden;
-    animation: rotateBagua 10s linear infinite; /* 动画名称 持续时间 动画速度 无限次 */
+    animation: rotateBagua 15s linear infinite;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 /* 阴阳鱼的小圆点 */
@@ -108,11 +134,11 @@ button:hover {
 .bagua-circle::after {
     content: '';
     position: absolute;
-    width: 20px; /* 小圆点大小 */
-    height: 20px; /* 小圆点大小 */
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background-color: black;
-    top: 25px; /* 顶部位置 */
+    top: 35px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -121,15 +147,15 @@ button:hover {
 .bagua-circle::after {
     background-color: white;
     top: auto;
-    bottom: 25px; /* 底部位置 */
+    bottom: 35px;
 }
 
 /* 定义旋转动画 */
 @keyframes rotateBagua {
     from {
-        transform: rotate(0deg); /* 从 0 度开始 */
+        transform: rotate(0deg);
     }
     to {
-        transform: rotate(360deg); /* 旋转到 360 度 */
+        transform: rotate(360deg);
     }
 }
