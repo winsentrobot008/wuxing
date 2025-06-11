@@ -19,7 +19,6 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         eightChar.getMonthGan(), eightChar.getMonthZhi(),
         eightChar.getDayGan(), eightChar.getDayZhi()
     ];
-
     if (!noHour) {
         symbols.push(eightChar.getTimeGan(), eightChar.getTimeZhi());
     }
@@ -52,8 +51,46 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         analysis += `\n✅ 五行较为平衡`;
     }
 
-    // 用神推荐
-    const weakest = Object.entries(wuxingCounts).sort((a, b) => a[1] - b[1])[0][0];
+    // 纳音五行表（来自 lunar.js）
+    const nayins = [
+        lunar.getYearNaYin(),
+        lunar.getMonthNaYin(),
+        lunar.getDayNaYin(),
+        noHour ? '(未知)' : lunar.getTimeNaYin()
+    ];
+    const nayinTable = `
+    年柱：${nayins[0]}  
+    月柱：${nayins[1]}  
+    日柱：${nayins[2]}  
+    时柱：${nayins[3]}`;
+
+    // 日主五行分析
+    const riGan = eightChar.getDayGan();
+    const riElement = fiveElementMap[riGan];
+
+    // 喜用神推断（简单版本，后续可升级）
+    const selfCount = wuxingCounts[riElement];
+    const strong = selfCount >= 2; // 粗略判断
+    let usefulElement = "";
+
+    // 喜用神推断逻辑（简化版）
+    const elementControl = {
+        wood: { 克我: 'metal', 生我: 'water', 我生: 'fire', 我克: 'earth' },
+        fire: { 克我: 'water', 生我: 'wood', 我生: 'earth', 我克: 'metal' },
+        earth: { 克我: 'wood', 生我: 'fire', 我生: 'metal', 我克: 'water' },
+        metal: { 克我: 'fire', 生我: 'earth', 我生: 'water', 我克: 'wood' },
+        water: { 克我: 'earth', 生我: 'metal', 我生: 'wood', 我克: 'fire' }
+    };
+
+    if (strong) {
+        usefulElement = elementControl[riElement]['我生']; // 泄秀
+    } else {
+        usefulElement = elementControl[riElement]['生我']; // 得生
+    }
+
+    const yongshenAdvice = `您的日主为【${riGan}】，五行属【${riElement}】，属于“${strong ? "身强" : "身弱"}”之命。<br>
+推荐喜用神方向：${usefulElement} → 宜补此五行助运。`;
+
     const nameDict = {
         wood: ['林', '森', '荣', '楠', '桐'],
         fire: ['炫', '炎', '煜', '烨', '烽'],
@@ -62,9 +99,8 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         earth: ['坤', '垚', '均', '城', '培']
     };
 
-    const nameAdvice = `建议起名偏向「${weakest}」五行，推荐字：${nameDict[weakest].join('、')}。`;
+    const nameAdvice = `推荐用神五行为：${usefulElement}，适合名字偏向：${nameDict[usefulElement].join('、')}。`;
 
-    // 性格推测（简单版本）
     const characterHintMap = {
         wood: "仁义直爽，重情重义。",
         fire: "热情外向，有领导力。",
@@ -72,12 +108,14 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         metal: "果断刚毅，有正义感。",
         water: "聪明机智，思维活跃。"
     };
-    const characterSummary = `您五行中“${weakest}”较弱，建议加强该方面特质培养。\n大致命格性格倾向：${characterHintMap[weakest]}`;
+    const characterSummary = `您命中偏向“${riElement}”，喜用神为“${usefulElement}”，宜培养此方面人格。\n性格倾向：${characterHintMap[riElement]}`;
 
     return {
         wuxingCounts,
         analysis,
         nameAdvice,
-        characterSummary
+        characterSummary,
+        nayinTable,
+        yongshenAdvice
     };
 }

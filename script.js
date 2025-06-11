@@ -29,12 +29,16 @@ function calculateWuXing() {
       <p>🌟农历：${lunar.getYearInChinese()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()}日</p>
       <p>🌟生肖：${lunar.getYearShengXiao()}</p>
       <p>🌟八字：${eightChar.getYear()} ${eightChar.getMonth()} ${eightChar.getDay()} ${noHour ? "(未知)" : eightChar.getTime()}</p>
-      <p>🌟纳音五行：${lunar.getYearNaYin()}</p>
+      <p>🌈 纳音五行：</p>
+      ${baziAnalysis.nayinTable}
       <hr>
       <p><strong>🔎 五行分布分析：</strong></p>
       ${baziAnalysis.analysis}
       <hr>
-      <p><strong>🧠 用神建议：</strong></p>
+      <p><strong>🎯 喜用神推荐：</strong></p>
+      ${baziAnalysis.yongshenAdvice}
+      <hr>
+      <p><strong>🧠 名字建议：</strong></p>
       ${baziAnalysis.nameAdvice}
       <hr>
       <p><strong>📜 命格性格提示：</strong></p>
