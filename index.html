@@ -1,202 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>金木水火土</title>
-
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* 确保不显示之前可能的语言切换器 */
-        .language-switcher {
-            display: none;
-        }
-
-        /* 确保 Google 翻译小部件在页面中居中显示 */
-        #google_translate_element {
-            text-align: center;
-            margin-bottom: 10px;
-            padding-top: 10px;
-        }
-
-        /* 静态图片容器样式 - 默认可见 */
-        #bagua-static-container { 
-            text-align: center;
-            margin: 20px auto; 
-            width: 200px; /* 根据你的图片大小调整 */
-            height: 200px; /* 根据你的图片大小调整 */
-        }
-
-        #bagua-static-container img {
-            max-width: 100%; /* 确保图片不会溢出容器 */
-            height: auto; /* 保持图片比例 */
-            display: block; /* 移除图片底部空白 */
-            margin: 0 auto; /* 居中图片 */
-        }
-
-        /* 动态八卦图容器样式 - 默认隐藏 (即使现在没有动态图，也要保留这...) */
-        #bagua-dynamic-container {
-            display: none; 
-            text-align: center;
-            margin: 20px auto;
-            width: 200px; /* 根据你的图片大小调整 */
-            height: 200px; /* 根据你的图片大小调整 */
-            /* 如果未来需要显示动态图，在这里添加样式 */
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1, h2 {
-            text-align: center;
-            color: #5a5a5a;
-        }
-
-        .input-section, .output-section {
-            margin-bottom: 25px;
-            padding: 20px;
-            border: 1px solid #eee;
-            border-radius: 6px;
-            background-color: #fafafa;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .input-group input[type="number"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .wuxing-counts p {
-            display: inline-block;
-            margin-right: 15px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        #baziOutput, #analysisOutput {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #0056b3;
-            min-height: 30px; /* 确保占位 */
-            line-height: 1.5;
-        }
-        #analysisOutput {
-            white-space: pre-wrap; /* 保持换行 */
-        }
-
-        /* Responsive design */
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-
-            .input-group input[type="number"] {
-                width: calc(100% - 20px);
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>五行测算</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    label, input, button {
+      margin: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>八字五行分析</h1>
-        
-        <div id="google_translate_element"></div>
+  <h1>生辰八字五行测算</h1>
+  <label for="birthday">请输入出生日期（阳历）：</label>
+  <input type="date" id="birthday" required>
+  <label for="hour">出生时辰（小时）：</label>
+  <input type="number" id="hour" min="0" max="23" placeholder="0-23" required>
+  <button onclick="calculateWuXing()">测算五行</button>
+  <div id="result"></div>
 
-        <div class="input-section">
-            <h2>请输入您的出生信息:</h2>
-            <div class="input-group">
-                <label for="year">出生年份:</label>
-                <input type="number" id="year" placeholder="例如: 1990" min="1900" max="2100">
-            </div>
-            <div class="input-group">
-                <label for="month">出生月份:</label>
-                <input type="number" id="month" placeholder="1-12" min="1" max="12">
-            </div>
-            <div class="input-group">
-                <label for="day">出生日期:</label>
-                <input type="number" id="day" placeholder="1-31" min="1" max="31">
-            </div>
-            <div class="input-group">
-                <label for="hour">出生时辰 (24小时制):</label>
-                <input type="number" id="hour" placeholder="0-23" min="0" max="23">
-
-                <button id="calculateBtn">开始分析</button>
-            </div>
-        </div>
-
-        <div class="output-section">
-            <h2>您的八字:</h2>
-            <p id="baziOutput">等待输入...</p>
-        </div>
-
-        <div class="output-section">
-            <h2>五行分布:</h2>
-            <div class="wuxing-counts">
-                <p>金: <span id="metalCount">0</span></p>
-                <p>木: <span id="woodCount">0</span></p>
-                <p>水: <span id="waterCount">0</span></p>
-                <p>火: <span id="fireCount">0</span></p>
-                <p>土: <span id="earthCount">0</span></p>
-            </div>
-        </div>
-
-        <div class="output-section">
-            <h2>简要分析:</h2>
-            <p id="analysisOutput">请输入您的出生信息，点击“开始分析”</p>
-        </div>
-    </div>
-
-    <script src="js/lunar.js"></script>
-    <script src="js/calculateBazi.js"></script>
-    <script src="script.js"></script>
-
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'zh', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
+  <!-- 使用 CDN，推荐 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.8.2/lunar.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
