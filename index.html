@@ -1,51 +1,21 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生辰八字五行测算与命理分析</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <div class="container">
-    <h1>生辰八字五行测算与命理分析</h1>
+<h2>生辰八字五行测算</h2>
+<label>请输入出生日期（阳历）：</label>
+<input type="date" id="birthday"><br><br>
 
-    <div class="input-group">
-      <label for="birthday">请输入出生日期（阳历）：</label>
-      <input type="date" id="birthday" required>
-    </div>
+<label>出生时辰（小时 0-23）：</label>
+<input type="number" id="hour" min="0" max="23">
+<label><input type="checkbox" id="noHour"> 不知道出生时辰</label><br><br>
 
-    <div class="input-group">
-      <label for="hour">出生时辰（小时 0-23）：</label>
-      <input type="number" id="hour" min="0" max="23">
-      <label><input type="checkbox" id="noHour"> 不知道出生时辰</label>
-    </div>
-    
-    <div class="input-group">
-      <label for="gender">性别：</label>
-      <select id="gender">
-        <option value="male">男</option>
-        <option value="female">女</option>
-      </select>
-    </div>
-    
-    <button onclick="calculateWuXing()">测算五行</button>
+<label>性别：</label>
+<select id="gender">
+  <option value="male">男</option>
+  <option value="female">女</option>
+</select><br><br>
 
-    <div id="result"></div>
-  </div>
+<button onclick="calculateWuXing()">测算五行</button>
 
-  <div id="wuxingModal" class="modal">
-    <div class="modal-content">
-      <span class="close-button" onclick="document.getElementById('wuxingModal').style.display='none'">&times;</span>
-      <h3 id="modalTitle"></h3>
-      <p id="modalCharacter"></p>
-      <p id="modalHealth"></p>
-      <p id="modalCareer"></p>
-    </div>
-  </div>
+<div id="result" style="margin-top:20px; white-space: pre-wrap;"></div>
 
-  <script src="lunar.js"></script>
-  <script src="calculateBazi.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+<script src="lunar.js"></script>
+<script src="calculateBazi.js"></script>
+<script src="script.js"></script>
