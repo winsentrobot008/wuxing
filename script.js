@@ -1,3 +1,5 @@
+let radarChart, barChart;
+
 function calculateWuXing() {
   const birthdayInput = document.getElementById('birthday').value;
   const hourInput = document.getElementById('hour').value;
@@ -44,8 +46,66 @@ function calculateWuXing() {
       <p><strong>📜 命格性格提示：</strong></p>
       ${baziAnalysis.characterSummary}
     `;
+
+    renderCharts(baziAnalysis.wuxingCounts);
   } catch (error) {
     resultDiv.innerHTML = `❌ 错误：${error.message}`;
     console.error(error);
   }
+}
+
+function renderCharts(wuxingCounts) {
+  const labels = ['金', '木', '水', '火', '土'];
+  const data = labels.map(label => wuxingCounts[label.toLowerCase()] || 0);
+
+  // 销毁旧图
+  if (radarChart) radarChart.destroy();
+  if (barChart) barChart.destroy();
+
+  const radarCtx = document.getElementById('wuxingRadarChart').getContext('2d');
+  const barCtx = document.getElementById('wuxingBarChart').getContext('2d');
+
+  radarChart = new Chart(radarCtx, {
+    type: 'radar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '五行雷达图',
+        data: data,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 2,
+        pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+      }]
+    },
+    options: {
+      responsive: true,
+      scale: {
+        ticks: { beginAtZero: true, stepSize: 1 }
+      }
+    }
+  });
+
+  barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '五行数量',
+        data: data,
+        backgroundColor: [
+          '#f1c40f', '#27ae60', '#3498db', '#e74c3c', '#a57c1b'
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          stepSize: 1
+        }
+      }
+    }
+  });
 }
