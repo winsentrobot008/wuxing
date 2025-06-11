@@ -1,41 +1,31 @@
 function calculateWuXing() {
   const birthdayInput = document.getElementById('birthday').value;
   const hourInput = document.getElementById('hour').value;
+  const noHour = document.getElementById('noHour').checked;
   const resultDiv = document.getElementById('result');
 
-  if (!birthdayInput || !hourInput) {
-    resultDiv.innerHTML = '请填写出生日期和时辰！';
+  if (!birthdayInput || (!hourInput && !noHour)) {
+    resultDiv.innerHTML = '请填写出生日期和时辰（或勾选“不知道出生时辰”）！';
     return;
   }
 
   try {
     const date = new Date(birthdayInput);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 月份从0开始
+    const month = date.getMonth() + 1;
     const day = date.getDate();
-    const hour = parseInt(hourInput);
+    const hour = parseInt(hourInput || '0');
 
-    if (isNaN(year) || isNaN(month) || isNaN(day) || isNaN(hour) || hour < 0 || hour > 23) {
-      resultDiv.innerHTML = '请输入有效的日期和时辰（0-23小时）！';
-      return;
-    }
+    const solar = noHour
+      ? Solar.fromYmd(year, month, day)
+      : Solar.fromYmdHms(year, month, day, hour, 0, 0);
 
-    const solar = Solar.fromYmdHms(year, month, day, hour, 0, 0);
     const lunar = solar.getLunar();
 
     const yearGanZhi = lunar.getYearInGanZhi();
     const monthGanZhi = lunar.getMonthInGanZhi();
     const dayGanZhi = lunar.getDayInGanZhi();
-    const hourGanZhi = lunar.getTimeInGanZhi();
-
-    const timeZhi = lunar.getTimeZhi();
-    const timeNames = {
-      '子': '子时 (23:00-01:00)', '丑': '丑时 (01:00-03:00)', '寅': '寅时 (03:00-05:00)',
-      '卯': '卯时 (05:00-07:00)', '辰': '辰时 (07:00-09:00)', '巳': '巳时 (09:00-11:00)',
-      '午': '午时 (11:00-13:00)', '未': '未时 (13:00-15:00)', '申': '申时 (15:00-17:00)',
-      '酉': '酉时 (17:00-19:00)', '戌': '戌时 (19:00-21:00)', '亥': '亥时 (21:00-23:00)'
-    };
-    const timeChinese = timeNames[timeZhi] || timeZhi;
+    const hourGanZhi = noHour ? '(未知)' : lunar.getTimeInGanZhi();
 
     const wuXingMap = {
       '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
@@ -45,32 +35,35 @@ function calculateWuXing() {
     const yearGan = yearGanZhi[0];
     const monthGan = monthGanZhi[0];
     const dayGan = dayGanZhi[0];
-    const hourGan = hourGanZhi[0];
+    const hourGan = noHour ? null : hourGanZhi[0];
 
     const wuXing = {
       year: wuXingMap[yearGan] || '未知',
       month: wuXingMap[monthGan] || '未知',
       day: wuXingMap[dayGan] || '未知',
-      hour: wuXingMap[hourGan] || '未知'
+      hour: noHour ? '未知' : (wuXingMap[hourGan] || '未知')
     };
 
     const wuXingCount = {};
     Object.values(wuXing).forEach(element => {
-      wuXingCount[element] = (wuXingCount[element] || 0) + 1;
+      if (element !== '未知') {
+        wuXingCount[element] = (wuXingCount[element] || 0) + 1;
+      }
     });
 
-    // 调用 calculateBazi 分析八字与五行
     const eightChar = lunar.getEightChar();
-    const baziAnalysis = calculateBazi(eightChar);
+    const baziAnalysis = calculateBazi(eightChar, noHour);
 
     resultDiv.innerHTML = `
-      <p>农历：${lunar.getYearInChinese()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()}日 ${timeChinese}</p>
+      <p>农历：${lunar.getYearInChinese()}年 ${lunar.getMonthInChinese()}月 ${lunar.getDayInChinese()}日</p>
       <p>八字：${yearGanZhi} ${monthGanZhi} ${dayGanZhi} ${hourGanZhi}</p>
       <p>五行：年(${wuXing.year}) 月(${wuXing.month}) 日(${wuXing.day}) 时(${wuXing.hour})</p>
       <p>五行简析：${JSON.stringify(wuXingCount)}</p>
       <hr>
       <p><strong>八字五行详细分析：</strong></p>
       <pre>${baziAnalysis.analysis}</pre>
+      <p><strong>起名用字建议：</strong></p>
+      <pre>${baziAnalysis.nameAdvice}</pre>
     `;
   } catch (error) {
     resultDiv.innerHTML = `错误：${error.message}`;

@@ -75,3 +75,18 @@
 <script src="script.js"></script>
 </body>
 </html>
+<h2>生辰八字五行测算</h2>
+<label>请输入出生日期（阳历）：</label>
+<input type="date" id="birthday"><br><br>
+
+<label>出生时辰（小时 0-23）：</label>
+<input type="number" id="hour" min="0" max="23">
+<label><input type="checkbox" id="noHour"> 不知道出生时辰</label><br><br>
+
+<button onclick="calculateWuXing()">测算五行</button>
+
+<div id="result" style="margin-top:20px;"></div>
+
+<script src="lunar.js"></script>
+<script src="calculateBazi.js"></script>
+<script src="script.js"></script>
