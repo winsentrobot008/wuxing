@@ -55,10 +55,11 @@ function calculateWuXing() {
 }
 
 function renderCharts(wuxingCounts) {
+  const keys = ['metal', 'wood', 'water', 'fire', 'earth'];
   const labels = ['金', '木', '水', '火', '土'];
-  const data = labels.map(label => wuxingCounts[label.toLowerCase()] || 0);
+  const data = keys.map(key => wuxingCounts[key] || 0);
 
-  // 销毁旧图
+  // 销毁旧图表
   if (radarChart) radarChart.destroy();
   if (barChart) barChart.destroy();
 
@@ -80,8 +81,13 @@ function renderCharts(wuxingCounts) {
     },
     options: {
       responsive: true,
-      scale: {
-        ticks: { beginAtZero: true, stepSize: 1 }
+      scales: {
+        r: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        }
       }
     }
   });
@@ -103,7 +109,9 @@ function renderCharts(wuxingCounts) {
       scales: {
         y: {
           beginAtZero: true,
-          stepSize: 1
+          ticks: {
+            stepSize: 1
+          }
         }
       }
     }
