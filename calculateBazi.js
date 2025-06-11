@@ -10,32 +10,35 @@ function calculateBazi(eightChar) {
 
     // 初始化五行计数
     const wuxingCounts = { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 };
-    const pillars = eightChar.getEightChar(); // 获取八字四柱数组
 
-    // 遍历四柱，统计天干、地支主气和藏干的五行
-    for (const pillar of pillars) {
-        // 天干的五行
-        const ganFiveElement = pillar.getGan().getFiveElement().getName().toLowerCase();
-        if (wuxingCounts.hasOwnProperty(ganFiveElement)) {
-            wuxingCounts[ganFiveElement]++;
-        }
-
-        // 地支的五行（主气）
-        const zhiFiveElement = pillar.getZhi().getFiveElement().getName().toLowerCase();
-        if (wuxingCounts.hasOwnProperty(zhiFiveElement)) {
-            wuxingCounts[zhiFiveElement]++;
-        }
-
-        // 考虑地支藏干的五行
-        const hideGans = pillar.getZhi().getHideGan();
-        for (const hideGan of hideGans) {
-             const hideGanFiveElement = hideGan.getFiveElement().getName().toLowerCase();
-             if (wuxingCounts.hasOwnProperty(hideGanFiveElement)) {
-                 wuxingCounts[hideGanFiveElement]++;
-             }
+    // 辅助函数：根据天干或地支的五行加计数
+    function countElement(elementObj) {
+        const element = elementObj.getFiveElement().getName().toLowerCase();
+        if (wuxingCounts.hasOwnProperty(element)) {
+            wuxingCounts[element]++;
         }
     }
-    
+
+    // 统计年柱
+    countElement(eightChar.getYearGan());
+    countElement(eightChar.getYearZhi());
+    eightChar.getYearZhi().getHideGan().forEach(countElement);
+
+    // 统计月柱
+    countElement(eightChar.getMonthGan());
+    countElement(eightChar.getMonthZhi());
+    eightChar.getMonthZhi().getHideGan().forEach(countElement);
+
+    // 统计日柱
+    countElement(eightChar.getDayGan());
+    countElement(eightChar.getDayZhi());
+    eightChar.getDayZhi().getHideGan().forEach(countElement);
+
+    // 统计时柱
+    countElement(eightChar.getTimeGan());
+    countElement(eightChar.getTimeZhi());
+    eightChar.getTimeZhi().getHideGan().forEach(countElement);
+
     // 生成简要分析
     let analysis = "您的八字五行分布如下：";
     analysis += `金 (${wuxingCounts.metal}个) `;
@@ -44,7 +47,7 @@ function calculateBazi(eightChar) {
     analysis += `火 (${wuxingCounts.fire}个) `;
     analysis += `土 (${wuxingCounts.earth}个)。`;
 
-    const totalElements = wuxingCounts.metal + wuxingCounts.wood + wuxingCounts.water + wuxingCounts.fire + wuxingCounts.earth;
+    const totalElements = Object.values(wuxingCounts).reduce((sum, val) => sum + val, 0);
     const average = totalElements / 5;
     let imbalances = [];
 
