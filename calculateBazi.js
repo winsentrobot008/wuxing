@@ -2,11 +2,11 @@
 // 确保 lunar.js 在此文件之前加载，以便 Solar, Lunar, EightChar 对象可用
 
 function calculateBazi(eightChar) {
-    // 生成八字字符串
-    const baziString = `${eightChar.getYearGan().getName()} ${eightChar.getYearZhi().getName()} ` +
-                       `${eightChar.getMonthGan().getName()} ${eightChar.getMonthZhi().getName()} ` +
-                       `${eightChar.getDayGan().getName()} ${eightChar.getDayZhi().getName()} ` +
-                       `${eightChar.getTimeGan().getName()} ${eightChar.getTimeZhi().getName()}`;
+    // 生成八字字符串（不再调用 getName()，直接获取字符串）
+    const baziString = `${eightChar.getYearGan()} ${eightChar.getYearZhi()} ` +
+                       `${eightChar.getMonthGan()} ${eightChar.getMonthZhi()} ` +
+                       `${eightChar.getDayGan()} ${eightChar.getDayZhi()} ` +
+                       `${eightChar.getTimeGan()} ${eightChar.getTimeZhi()}`;
 
     // 初始化五行计数
     const wuxingCounts = { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 };
@@ -49,9 +49,9 @@ function calculateBazi(eightChar) {
     let imbalances = [];
 
     for (const element in wuxingCounts) {
-        if (wuxingCounts[element] > average * 1.5) { // 偏多
+        if (wuxingCounts[element] > average * 1.5) {
             imbalances.push(`${element}气偏旺`);
-        } else if (wuxingCounts[element] < average * 0.5) { // 偏少
+        } else if (wuxingCounts[element] < average * 0.5) {
             imbalances.push(`${element}气偏弱`);
         }
     }
