@@ -1,161 +1,252 @@
 /* 全局样式 */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+  font-family: 'Noto Sans SC', sans-serif;
+  background-color: #f9f5f0;
+  background-image: 
+    radial-gradient(#d2b48c 1px, transparent 0),
+    radial-gradient(#d2b48c 1px, transparent 0);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* 容器样式 */
+/* 主要容器 */
 .container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 700px;
-    text-align: center;
-    transition: transform 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  max-width: 800px;
+  width: 100%;
+  margin-top: 40px;
+  transition: all 0.3s ease;
 }
 
 .container:hover {
-    transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 /* 标题样式 */
-h1, h2 {
-    color: #333;
-    margin-bottom: 20px;
-    font-weight: 600;
+h1 {
+  color: #8B4513;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* 输入组样式 */
-.input-group {
-    margin-bottom: 20px;
-    text-align: left;
+h2 {
+  color: #A0522D;
+  font-size: 1.8rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #D2B48C;
+  padding-bottom: 8px;
 }
 
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: #555;
+/* 表单样式 */
+.form-group {
+  margin-bottom: 20px;
 }
 
-.input-group input[type="number"],
-.input-group input[type="date"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #5D4037;
 }
 
-.input-group input[type="number"]:focus,
-.input-group input[type="date"]:focus {
-    border-color: #4CAF50;
-    outline: none;
+input[type="date"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #D2B48C;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+input[type="date"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: #8B4513;
+  box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
 }
 
 /* 按钮样式 */
 button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 24px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 20px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+  background-color: #8B4513;
+  color: white;
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: 100%;
 }
 
 button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
+  background-color: #A0522D;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* 结果样式 */
+button:active {
+  transform: translateY(1px);
+}
+
+/* 结果区域 */
 .results {
-    margin-top: 40px;
-    padding-top: 30px;
-    border-top: 1px solid #eee;
-    text-align: left;
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #fcf8f3;
+  border-radius: 10px;
+  border: 1px solid #D2B48C;
 }
 
-.results p, .results ul {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.8;
+.results p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #3E2723;
 }
 
-.results ul {
-    list-style: none;
-    padding: 0;
+/* 五行显示 */
+.wuxing-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px 0;
 }
 
-.results ul li {
-    margin-bottom: 8px;
+.wuxing-item {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-#analysisOutput {
-    font-style: italic;
-    color: #007BFF;
+.wuxing-item:hover {
+  transform: scale(1.1);
 }
 
-/* 八卦图容器样式 */
+.wuxing-item.wood {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.wuxing-item.fire {
+  background-color: #F44336;
+  color: white;
+}
+
+.wuxing-item.earth {
+  background-color: #FF9800;
+  color: white;
+}
+
+.wuxing-item.metal {
+  background-color: #9E9E9E;
+  color: white;
+}
+
+.wuxing-item.water {
+  background-color: #2196F3;
+  color: white;
+}
+
+/* 八卦图 */
 .bagua-container {
-    text-align: center;
-    margin: 30px 0;
+  text-align: center;
+  margin: 30px 0;
 }
 
-/* 八卦图样式 */
 .bagua-circle {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 3px solid #333;
-    display: inline-block;
-    background: linear-gradient(to right, black 50%, white 50%);
-    position: relative;
-    overflow: hidden;
-    animation: rotateBagua 15s linear infinite;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid #8B4513;
+  display: inline-block;
+  position: relative;
+  background: linear-gradient(90deg, #000 50%, #fff 50%);
+  overflow: hidden;
+  animation: rotate 20s linear infinite;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
-/* 阴阳鱼的小圆点 */
 .bagua-circle::before,
 .bagua-circle::after {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: black;
-    top: 35px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1;
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.bagua-circle::before {
+  left: 25%;
+  background-color: #000;
+  border: 12px solid #fff;
 }
 
 .bagua-circle::after {
-    background-color: white;
-    top: auto;
-    bottom: 35px;
+  right: 25%;
+  background-color: #fff;
+  border: 12px solid #000;
 }
 
-/* 定义旋转动画 */
-@keyframes rotateBagua {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  .wuxing-item {
+    width: 60px;
+    height: 60px;
+    font-size: 14px;
+  }
+  
+  .bagua-circle {
+    width: 140px;
+    height: 140px;
+  }
 }

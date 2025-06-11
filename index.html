@@ -1,21 +1,64 @@
-<h2>生辰八字五行测算</h2>
-<label>请输入出生日期（阳历）：</label>
-<input type="date" id="birthday"><br><br>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生辰八字测算 | 五行分析</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>生辰八字测算与五行分析</h1>
+    
+    <div class="bagua-container">
+      <div class="bagua-circle"></div>
+    </div>
+    
+    <form id="baziForm">
+      <!-- 表单内容 -->
+      <div class="form-group">
+        <label for="birthDate">出生日期</label>
+        <input type="date" id="birthDate" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="birthHour">出生时辰</label>
+        <select id="birthHour" required>
+          <option value="">请选择时辰</option>
+          <option value="0">子时 (23:00-01:00)</option>
+          <option value="1">丑时 (01:00-03:00)</option>
+          <!-- 其他时辰选项 -->
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="gender">性别</label>
+        <select id="gender" required>
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      
+      <button type="button" id="calculateBtn">计算八字与五行</button>
+    </form>
+    
+    <div id="results" class="results">
+      <h2>测算结果</h2>
+      <div id="baziOutput">
+        <!-- 八字结果将显示在这里 -->
+      </div>
+      
+      <div class="wuxing-container" id="wuxingDisplay">
+        <!-- 五行显示将动态生成在这里 -->
+      </div>
+      
+      <div id="analysisOutput">
+        <!-- 分析结果将显示在这里 -->
+      </div>
+    </div>
+  </div>
 
-<label>出生时辰（小时 0-23）：</label>
-<input type="number" id="hour" min="0" max="23">
-<label><input type="checkbox" id="noHour"> 不知道出生时辰</label><br><br>
-
-<label>性别：</label>
-<select id="gender">
-  <option value="male">男</option>
-  <option value="female">女</option>
-</select><br><br>
-
-<button onclick="calculateWuXing()">测算五行</button>
-
-<div id="result" style="margin-top:20px; white-space: pre-wrap;"></div>
-
-<script src="lunar.js"></script>
-<script src="calculateBazi.js"></script>
-<script src="script.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
