@@ -57,7 +57,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
 
 
     const wuxingCounts = { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 };
-    const pillars = eightChar.getEightChar(); // 获取八字四柱数组
+    const pillars = eightChar.getPillars(); // 这一行是正确的
 
     // 遍历四柱，统计天干、地支主气和藏干的五行
     for (const pillar of pillars) {
