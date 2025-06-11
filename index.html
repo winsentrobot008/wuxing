@@ -3,169 +3,276 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生辰八字测算结果</title>
+  <title>生辰八字测算 | 五行分析</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* 结果卡片样式 */
-    .result-card {
-      background: linear-gradient(145deg, #f5f5f5, #ffffff);
-      border-radius: 18px;
-      box-shadow: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
-      padding: 30px;
-      margin: 20px 0;
-      transition: all 0.3s ease;
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8B4513',    // 主色调：棕褐色，代表传统文化
+            secondary: '#D2B48C',  // 辅助色：米色
+            accent: '#F59E0B',     // 强调色：琥珀色
+            wood: '#22C55E',       // 五行-木
+            fire: '#EF4444',       // 五行-火
+            earth: '#F59E0B',      // 五行-土
+            metal: '#9CA3AF',      // 五行-金
+            water: '#3B82F6',      // 五行-水
+          },
+          fontFamily: {
+            sans: ['Noto Sans SC', 'sans-serif'],
+          },
+        },
+      }
     }
-    
-    .result-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff;
-    }
-    
-    /* 标题样式 */
-    .result-title {
-      display: flex;
-      align-items: center;
-      color: #8B4513;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #D2B48C;
-    }
-    
-    .result-title i {
-      font-size: 24px;
-      margin-right: 10px;
-    }
-    
-    /* 五行可视化 */
-    .wuxing-chart {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      padding: 15px 0;
-    }
-    
-    .wuxing-item {
-      display: flex;
-      align-items: center;
-      margin: 8px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-weight: 500;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    
-    .wuxing-item i {
-      width: 20px;
-      text-align: center;
-      margin-right: 5px;
-    }
-    
-    .wood { background-color: #a7d30c; color: #333; }
-    .fire { background-color: #f27405; color: #fff; }
-    .earth { background-color: #d97706; color: #fff; }
-    .metal { background-color: #9ca3af; color: #333; }
-    .water { background-color: #3b82f6; color: #fff; }
-    
-    /* 警示信息 */
-    .warning {
-      background-color: #fef3c7;
-      border-left: 4px solid #f59e0b;
-      padding: 10px 15px;
-      margin: 15px 0;
-      border-radius: 0 4px 4px 0;
-    }
-    
-    /* 建议标签 */
-    .recommend-tag {
-      display: inline-block;
-      background-color: #3b82f6;
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      margin-right: 8px;
-      margin-bottom: 8px;
-      font-size: 14px;
-      transition: all 0.3s ease;
-    }
-    
-    .recommend-tag:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* 生肖图标 */
-    .zodiac-icon {
-      font-size: 28px;
-      margin-right: 10px;
-      color: #8B4513;
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      .bg-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b4513' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .animate-float {
+        animation: float 3s ease-in-out infinite;
+      }
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+      }
     }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>生辰八字测算结果</h1>
-    
-    <div class="result-card">
-      <div class="result-title">
-        <i class="fa fa-calendar"></i> 出生日期信息
+
+<body class="bg-neutral-100 bg-pattern min-h-screen font-sans">
+  <!-- 导航栏 -->
+  <nav class="bg-primary/90 text-white sticky top-0 z-50 backdrop-blur-sm shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-calendar-alt text-2xl"></i>
+        <h1 class="text-xl md:text-2xl font-bold">生辰八字测算</h1>
       </div>
-      <p><span style="font-weight: bold;">农历：</span>二〇二五年 三月 廿一日</p>
-      <p>
-        <span style="font-weight: bold;">生肖：</span>
-        <i class="zodiac-icon fa fa-snake"></i>蛇
+      <div class="hidden md:flex space-x-6">
+        <a href="#" class="hover:text-accent transition-colors duration-300">首页</a>
+        <a href="#" class="hover:text-accent transition-colors duration-300">五行分析</a>
+        <a href="#" class="hover:text-accent transition-colors duration-300">命理知识</a>
+        <a href="#" class="hover:text-accent transition-colors duration-300">关于我们</a>
+      </div>
+      <button class="md:hidden text-2xl">
+        <i class="fa fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 主内容区 -->
+  <main class="container mx-auto px-4 py-8">
+    <!-- 介绍部分 -->
+    <section class="text-center mb-12">
+      <h2 class="text-[clamp(1.8rem,5vw,3rem)] font-bold text-primary mb-4 text-shadow">生辰八字测算</h2>
+      <p class="text-lg text-gray-700 max-w-3xl mx-auto">
+        基于中国传统命理学，通过您的出生日期和时间，精确计算八字五行，为您提供专业的命理分析和建议。
       </p>
-      <p><span style="font-weight: bold;">八字：</span>乙巳 庚辰 丁巳 (未知)</p>
-      <p><span style="font-weight: bold;">纳音五行：</span>覆灯火</p>
+      
+      <!-- 八卦图装饰 -->
+      <div class="mt-8 inline-block animate-float">
+        <div class="relative w-24 h-24 rounded-full bg-gradient-to-r from-black to-white border-4 border-primary">
+          <div class="absolute w-12 h-12 rounded-full bg-black top-0 left-1/2 transform -translate-x-1/2"></div>
+          <div class="absolute w-12 h-12 rounded-full bg-white bottom-0 left-1/2 transform -translate-x-1/2"></div>
+          <div class="absolute w-4 h-4 rounded-full bg-white top-1/4 left-1/2 transform -translate-x-1/2"></div>
+          <div class="absolute w-4 h-4 rounded-full bg-black bottom-1/4 left-1/2 transform -translate-x-1/2"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- 输入表单 -->
+      <section id="inputSection" class="bg-white rounded-xl shadow-xl p-6 card-hover">
+        <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+          <i class="fa fa-user-circle-o mr-2"></i>
+          请输入您的信息
+        </h3>
+        
+        <form id="baziForm" class="space-y-4">
+          <!-- 出生日期 -->
+          <div class="space-y-2">
+            <label for="birthDate" class="block text-gray-700 font-medium">出生日期</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa fa-calendar text-gray-400"></i>
+              </div>
+              <input type="date" id="birthDate" class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300" required>
+            </div>
+          </div>
+          
+          <!-- 出生时辰 -->
+          <div class="space-y-2">
+            <label for="birthHour" class="block text-gray-700 font-medium">出生时辰</label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa fa-clock-o text-gray-400"></i>
+              </div>
+              <select id="birthHour" class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300" required>
+                <option value="">请选择时辰</option>
+                <option value="0">子时 (23:00-01:00)</option>
+                <option value="1">丑时 (01:00-03:00)</option>
+                <option value="2">寅时 (03:00-05:00)</option>
+                <option value="3">卯时 (05:00-07:00)</option>
+                <option value="4">辰时 (07:00-09:00)</option>
+                <option value="5">巳时 (09:00-11:00)</option>
+                <option value="6">午时 (11:00-13:00)</option>
+                <option value="7">未时 (13:00-15:00)</option>
+                <option value="8">申时 (15:00-17:00)</option>
+                <option value="9">酉时 (17:00-19:00)</option>
+                <option value="10">戌时 (19:00-21:00)</option>
+                <option value="11">亥时 (21:00-23:00)</option>
+                <option value="unknown">不知道出生时辰</option>
+              </select>
+            </div>
+          </div>
+          
+          <!-- 性别 -->
+          <div class="space-y-2">
+            <label class="block text-gray-700 font-medium">性别</label>
+            <div class="flex space-x-4">
+              <div class="flex items-center">
+                <input type="radio" id="genderMale" name="gender" value="male" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" checked>
+                <label for="genderMale" class="ml-2 text-gray-700">男</label>
+              </div>
+              <div class="flex items-center">
+                <input type="radio" id="genderFemale" name="gender" value="female" class="w-4 h-4 text-primary focus:ring-primary border-gray-300">
+                <label for="genderFemale" class="ml-2 text-gray-700">女</label>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 农历选项 -->
+          <div class="flex items-center">
+            <input type="checkbox" id="isLunar" class="w-4 h-4 text-primary focus:ring-primary border-gray-300 rounded">
+            <label for="isLunar" class="ml-2 text-gray-700">输入的是农历日期</label>
+          </div>
+          
+          <!-- 提交按钮 -->
+          <button type="button" id="calculateBtn" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center">
+            <i class="fa fa-calculator mr-2"></i>
+            测算五行
+          </button>
+        </form>
+      </section>
+      
+      <!-- 结果展示 -->
+      <section id="resultSection" class="bg-white rounded-xl shadow-xl p-6 card-hover hidden">
+        <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+          <i class="fa fa-star-o mr-2"></i>
+          测算结果
+        </h3>
+        
+        <!-- 结果内容将通过JavaScript动态生成 -->
+        <div id="resultContent">
+          <!-- 结果将显示在这里 -->
+        </div>
+        
+        <!-- 重新计算按钮 -->
+        <button id="recalculateBtn" class="mt-6 w-full bg-secondary hover:bg-secondary/90 text-primary font-medium py-3 px-4 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center">
+          <i class="fa fa-refresh mr-2"></i>
+          重新计算
+        </button>
+      </section>
     </div>
     
-    <div class="result-card">
-      <div class="result-title">
-        <i class="fa fa-pie-chart"></i> 五行分布分析
+    <!-- 命理知识卡片 -->
+    <section class="mt-12 grid md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="w-12 h-12 bg-wood/20 rounded-full flex items-center justify-center mb-4">
+          <i class="fa fa-leaf text-wood text-xl"></i>
+        </div>
+        <h4 class="text-lg font-bold text-gray-800 mb-2">五行基础</h4>
+        <p class="text-gray-600">五行学说是中国古代哲学的核心概念，包括木、火、土、金、水五种基本元素，它们相互制约、相互转化。</p>
       </div>
-      <div class="wuxing-chart">
-        <div class="wuxing-item wood">
-          <i class="fa fa-leaf"></i> metal：1个
+      
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="w-12 h-12 bg-fire/20 rounded-full flex items-center justify-center mb-4">
+          <i class="fa fa-fire text-fire text-xl"></i>
         </div>
-        <div class="wuxing-item wood">
-          <i class="fa fa-leaf"></i> wood：1个
+        <h4 class="text-lg font-bold text-gray-800 mb-2">八字解析</h4>
+        <p class="text-gray-600">八字由年、月、日、时四柱组成，每一柱由天干和地支搭配，共八个字，代表一个人的出生时间和命运。</p>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+        <div class="w-12 h-12 bg-water/20 rounded-full flex items-center justify-center mb-4">
+          <i class="fa fa-tint text-water text-xl"></i>
         </div>
-        <div class="wuxing-item water">
-          <i class="fa fa-tint"></i> water：0个
+        <h4 class="text-lg font-bold text-gray-800 mb-2">命理应用</h4>
+        <p class="text-gray-600">八字命理可用于分析性格、事业、婚姻、健康等方面，帮助人们了解自己的优势和潜在挑战。</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-primary text-white mt-12 py-8">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div>
+          <h3 class="text-lg font-bold mb-4">生辰八字测算</h3>
+          <p class="text-gray-300">基于中国传统命理学，为您提供专业的八字分析和五行建议。</p>
         </div>
-        <div class="wuxing-item fire">
-          <i class="fa fa-fire"></i> fire：3个
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">快速链接</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">首页</a></li>
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">五行分析</a></li>
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">命理知识</a></li>
+            <li><a href="#" class="text-gray-300 hover:text-white transition-colors">关于我们</a></li>
+          </ul>
         </div>
-        <div class="wuxing-item earth">
-          <i class="fa fa-mountain"></i> earth：1个
+        
+        <div>
+          <h3 class="text-lg font-bold mb-4">联系我们</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center">
+              <i class="fa fa-envelope-o mr-2"></i>
+              <a href="mailto:contact@bazi.com" class="text-gray-300 hover:text-white transition-colors">contact@bazi.com</a>
+            </li>
+            <li class="flex items-center">
+              <i class="fa fa-phone mr-2"></i>
+              <span class="text-gray-300">400-123-4567</span>
+            </li>
+          </ul>
         </div>
       </div>
-      <div class="warning">
-        <strong>五行不均：</strong>water偏弱，fire偏旺
+      
+      <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+        <p>&copy; 2025 生辰八字测算. 保留所有权利.</p>
       </div>
     </div>
-    
-    <div class="result-card">
-      <div class="result-title">
-        <i class="fa fa-lightbulb-o"></i> 用神建议
-      </div>
-      <p>建议起名偏向「water」五行，推荐字：</p>
-      <div>
-        <span class="recommend-tag">涵</span>
-        <span class="recommend-tag">涛</span>
-        <span class="recommend-tag">润</span>
-        <span class="recommend-tag">洁</span>
-        <span class="recommend-tag">沛</span>
-      </div>
-    </div>
-    
-    <div class="result-card">
-      <div class="result-title">
-        <i class="fa fa-user"></i> 命格性格提示
-      </div>
-      <p>您五行中“water”较弱，建议加强该方面特质培养。</p>
-      <p>大致命格性格倾向：<strong>聪明机智，思维活跃</strong>。</p>
+  </footer>
+
+  <!-- 加载动画 -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center">
+      <div class="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
+      <p class="text-gray-700 font-medium">正在测算您的八字...</p>
     </div>
   </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
