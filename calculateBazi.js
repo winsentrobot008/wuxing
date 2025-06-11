@@ -13,6 +13,40 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         '戌': 'earth', '亥': 'water'
     };
 
+    // 五行详细说明
+    const fiveElementDetails = {
+        metal: {
+            name: '金',
+            character: '刚毅果断，正义感强，重视纪律和原则，行事干脆利落。',
+            health: '注意呼吸系统（如肺部）和皮肤健康，避免过度劳累。',
+            career: '适合金融、法律、工程、军事、管理等需要精准和决断的职业。'
+        },
+        wood: {
+            name: '木',
+            character: '仁慈善良，富有创造力，喜欢探索和成长，适应力强。',
+            health: '关注肝胆健康，避免情绪压抑，保持规律作息。',
+            career: '适合教育、设计、文学、环保、农业等需要创新和关怀的职业。'
+        },
+        water: {
+            name: '水',
+            character: '聪明机智，思维灵活，善于沟通，适应变化快。',
+            health: '注意肾脏和泌尿系统健康，避免过度消耗精力。',
+            career: '适合贸易、传媒、咨询、航运、科技等需要流动性和沟通的职业。'
+        },
+        fire: {
+            name: '火',
+            character: '热情奔放，富有领导力，乐观外向，感染力强。',
+            health: '关注心血管和眼睛健康，避免情绪激动和高温环境。',
+            career: '适合营销、娱乐、能源、教育、餐饮等需要活力和表达的职业。'
+        },
+        earth: {
+            name: '土',
+            character: '踏实稳重，诚信可靠，善于规划，注重安全感。',
+            health: '注意脾胃和消化系统健康，避免湿气和饮食不规律。',
+            career: '适合房地产、建筑、农业、物流、行政等需要稳定和组织的职业。'
+        }
+    };
+
     const wuxingCounts = { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 };
     const symbols = [
         eightChar.getYearGan(), eightChar.getYearZhi(),
@@ -31,7 +65,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
 
     let analysis = "";
     for (const k in wuxingCounts) {
-        analysis += `${k}：${wuxingCounts[k]}个\n`;
+        analysis += `${fiveElementDetails[k].name}：${wuxingCounts[k]}个\n`;
     }
 
     const total = Object.values(wuxingCounts).reduce((a, b) => a + b, 0);
@@ -40,9 +74,9 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
 
     for (const k in wuxingCounts) {
         if (wuxingCounts[k] > avg * 1.5) {
-            imbalances.push(`${k}偏旺`);
+            imbalances.push(`${fiveElementDetails[k].name}偏旺`);
         } else if (wuxingCounts[k] < avg * 0.5) {
-            imbalances.push(`${k}偏弱`);
+            imbalances.push(`${fiveElementDetails[k].name}偏弱`);
         }
     }
 
@@ -62,7 +96,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         earth: ['坤', '垚', '均', '城', '培']
     };
 
-    const nameAdvice = `建议起名偏向「${weakest}」五行，推荐字：${nameDict[weakest].join('、')}。`;
+    const nameAdvice = `建议起名偏向「${fiveElementDetails[weakest].name}」五行，推荐字：${nameDict[weakest].join('、')}。`;
 
     // 性格推测（简单版本）
     const characterHintMap = {
@@ -72,12 +106,13 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         metal: "果断刚毅，有正义感。",
         water: "聪明机智，思维活跃。"
     };
-    const characterSummary = `您五行中“${weakest}”较弱，建议加强该方面特质培养。\n大致命格性格倾向：${characterHintMap[weakest]}`;
+    const characterSummary = `您五行中“${fiveElementDetails[weakest].name}”较弱，建议加强该方面特质培养。\n大致命格性格倾向：${characterHintMap[weakest]}`;
 
     return {
         wuxingCounts,
         analysis,
         nameAdvice,
-        characterSummary
+        characterSummary,
+        fiveElementDetails // 返回五行详细说明
     };
 }
