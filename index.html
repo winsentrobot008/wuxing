@@ -1,21 +1,145 @@
-<h2>生辰八字五行测算</h2>
-<label>请输入出生日期（阳历）：</label>
-<input type="date" id="birthday"><br><br>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
 
-<label>出生时辰（小时 0-23）：</label>
-<input type="number" id="hour" min="0" max="23">
-<label><input type="checkbox" id="noHour"> 不知道出生时辰</label><br><br>
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
 
-<label>性别：</label>
-<select id="gender">
-  <option value="male">男</option>
-  <option value="female">女</option>
-</select><br><br>
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
 
-<button onclick="calculateWuXing()">测算五行</button>
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生辰八字五行测算</title>
+  <style>
+    body {
+      font-family: 'PingFang SC', Arial, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: #555;
+      font-size: 16px;
+    }
+    input[type="date"], input[type="number"], select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    button {
+      background: #ff6f61;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #e55a4e;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      text-align: left;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid #eee;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>生辰八字五行测算</h1>
+    <label for="birthday">请输入出生日期（阳历）：</label>
+    <input type="date" id="birthday" required>
+    
+    <label for="hour">出生时辰（小时 0-23）：</label>
+    <input type="number" id="hour" min="0" max="23" placeholder="0-23">
+    
+    <label>
+      <input type="checkbox" id="noHour"> 不知道出生时辰
+    </label>
+    
+    <label for="gender">性别：</label>
+    <select id="gender">
+      <option value="男">男</option>
+      <option value="女">女</option>
+    </select>
+    
+    <button onclick="calculateWuXing()">测算五行</button>
+    <div id="result"></div>
+  </div>
 
-<div id="result" style="margin-top:20px; white-space: pre-wrap;"></div>
-
-<script src="lunar.js"></script>
-<script src="calculateBazi.js"></script>
-<script src="script.js"></script>
+  <script src="lunar.js"></script>
+  <script src="calculateBazi.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
