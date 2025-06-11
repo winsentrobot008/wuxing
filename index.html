@@ -1,302 +1,66 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生辰八字五行测算</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #e0f7fa, #f3e5f5);
-      margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #333;
-    }
-    .container {
-      background: #fff;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-      max-width: 550px;
-      width: 100%;
-      text-align: center;
-      transition: transform 0.3s ease;
-    }
-    .container:hover {
-      transform: translateY(-5px);
-    }
-    h1 {
-      font-size: 28px;
-      color: #2c3e50;
-      margin-bottom: 25px;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
-    }
-    label {
-      display: block;
-      margin: 15px 0 8px;
-      color: #555;
-      font-size: 16px;
-      font-weight: 500;
-    }
-    input[type="date"], input[type="number"], select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 16px;
-      background: #f9f9f9;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-    input[type="date"]:focus, input[type="number"]:focus, select:focus {
-      border-color: #ff6f61;
-      box-shadow: 0 0 8px rgba(255, 111, 97, 0.2);
-      outline: none;
-    }
-    input[type="checkbox"] {
-      margin-right: 8px;
-      accent-color: #ff6f61;
-    }
-    .checkbox-label {
-      font-size: 15px;
-      color: #555;
-    }
-    button {
-      background: linear-gradient(90deg, #ff6f61, #ff8a65);
-      color: white;
-      padding: 14px 30px;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(255, 111, 97, 0.4);
-    }
-    button::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: rgba(255, 255, 255, 0.3);
-      transition: left 0.4s;
-    }
-    button:hover::after {
-      left: 100%;
-    }
-    #result {
-      margin-top: 25px;
-      padding: 20px;
-      background: #f8fafc;
-      border-radius: 12px;
-      text-align: left;
-      font-size: 16px;
-      line-height: 1.8;
-      color: #333;
-      border: 1px solid #f0f0f0;
-    }
-    hr {
-      border: 0;
-      border-top: 1px dashed #e0e0e0;
-      margin: 20px 0;
-    }
-    .wuxing {
-      text-decoration: none;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s, color 0.2s;
-    }
-    .wuxing:hover {
-      transform: scale(1.1);
-      text-decoration: underline;
-    }
-    /* 五行颜色区分 */
-    .wuxing[data-element="metal"] { color: #d4a017; } /* 金 */
-    .wuxing[data-element="wood"] { color: #2e7d32; } /* 木 */
-    .wuxing[data-element="water"] { color: #0288d1; } /* 水 */
-    .wuxing[data-element="fire"] { color: #d32f2f; } /* 火 */
-    .wuxing[data-element="earth"] { color: #6d4c41; } /* 土 */
-    /* 模态框样式 */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      animation: fadeIn 0.3s ease;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 25px;
-      border-radius: 15px;
-      max-width: 450px;
-      width: 90%;
-      text-align: left;
-      position: relative;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      animation: popUp 0.4s ease;
-    }
-    .modal-content h2 {
-      margin: 0 0 15px;
-      color: #2c3e50;
-      font-size: 22px;
-      display: flex;
-      align-items: center;
-    }
-    .modal-content h2::before {
-      content: '✨';
-      margin-right: 8px;
-    }
-    .modal-content p {
-      margin: 12px 0;
-      color: #555;
-      font-size: 15px;
-      line-height: 1.7;
-    }
-    .close-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 30px;
-      height: 30px;
-      background: #f0f0f0;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #666;
-      font-size: 18px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    .close-btn:hover {
-      background: #ff6f61;
-      color: #fff;
-    }
-    /* 动画 */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes popUp {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    /* 响应式 */
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px;
-        margin: 10px;
-      }
-      h1 {
-        font-size: 24px;
-      }
-      button {
-        padding: 12px 20px;
-        font-size: 16px;
-      }
-      .modal-content {
-        width: 95%;
-        padding: 20px;
-      }
-    }
-  </style>
+  <title>生辰八字测算 | 五行分析</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
-    <h1>生辰八字五行测算</h1>
-    <label for="birthday">请输入出生日期（阳历）：</label>
-    <input type="date" id="birthday" required>
+    <h1>生辰八字测算与五行分析</h1>
     
-    <label for="hour">出生时辰（小时 0-23）：</label>
-    <input type="number" id="hour" min="0" max="23" placeholder="0-23">
+    <div class="bagua-container">
+      <div class="bagua-circle"></div>
+    </div>
     
-    <label class="checkbox-label">
-      <input type="checkbox" id="noHour"> 不知道出生时辰
-    </label>
+    <form id="baziForm">
+      <div class="form-group">
+        <label for="birthDate">出生日期</label>
+        <input type="date" id="birthDate" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="birthHour">出生时辰</label>
+        <select id="birthHour" required>
+          <option value="">请选择时辰</option>
+          <option value="0">子时 (23:00-01:00)</option>
+          <option value="1">丑时 (01:00-03:00)</option>
+          <option value="2">寅时 (03:00-05:00)</option>
+          <option value="3">卯时 (05:00-07:00)</option>
+          <option value="4">辰时 (07:00-09:00)</option>
+          <option value="5">巳时 (09:00-11:00)</option>
+          <option value="6">午时 (11:00-13:00)</option>
+          <option value="7">未时 (13:00-15:00)</option>
+          <option value="8">申时 (15:00-17:00)</option>
+          <option value="9">酉时 (17:00-19:00)</option>
+          <option value="10">戌时 (19:00-21:00)</option>
+          <option value="11">亥时 (21:00-23:00)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="gender">性别</label>
+        <select id="gender" required>
+          <option value="male">男</option>
+          <option value="female">女</option>
+        </select>
+      </div>
+      
+      <button type="button" id="calculateBtn">计算八字与五行</button>
+    </form>
     
-    <label for="gender">性别：</label>
-    <select id="gender">
-      <option value="男">男</option>
-      <option value="女">女</option>
-    </select>
-    
-    <button onclick="calculateWuXing()">测算五行</button>
-    <div id="result"></div>
-  </div>
-
-  <!-- 模态框 -->
-  <div id="wuxingModal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">×</span>
-      <h2 id="modalTitle"></h2>
-      <p id="modalCharacter"></p>
-      <p id="modalHealth"></p>
-      <p id="modalCareer"></p>
+    <div id="results" class="results">
+      <h2>测算结果</h2>
+      <div id="baziOutput"></div>
+      
+      <div class="wuxing-container" id="wuxingDisplay"></div>
+      
+      <div id="analysisOutput"></div>
     </div>
   </div>
 
-  <script src="lunar.js"></script>
-  <script src="calculateBazi.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

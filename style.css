@@ -1,146 +1,191 @@
 /* 全局样式 */
 body {
   font-family: 'Noto Sans SC', sans-serif;
-  background-color: #f9f5f0;
-  background-image: 
-    radial-gradient(#d2b48c 1px, transparent 0),
-    radial-gradient(#d2b48c 1px, transparent 0);
-  background-size: 40px 40px;
-  background-position: 0 0, 20px 20px;
-  min-height: 100vh;
+  background-color: #f8f4e9;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d8c8a7' fill-opacity='0.2' fill-rule='evenodd'/%3E%3C/svg%3E");
   margin: 0;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-/* 主要容器 */
+/* 容器样式 */
 .container {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 15px;
+  background-color: #fff;
+  border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  max-width: 800px;
   width: 100%;
-  margin-top: 40px;
-  transition: all 0.3s ease;
+  max-width: 600px;
+  margin-top: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .container:hover {
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
 }
 
 /* 标题样式 */
 h1 {
-  color: #8B4513;
-  font-size: 2.5rem;
+  color: #5d4037;
+  font-size: 28px;
+  font-weight: 600;
   margin-bottom: 20px;
   text-align: center;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  color: #A0522D;
-  font-size: 1.8rem;
+  color: #795548;
+  font-size: 22px;
+  font-weight: 500;
   margin-top: 30px;
   margin-bottom: 15px;
-  border-bottom: 2px solid #D2B48C;
-  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+/* 八卦图样式 */
+.bagua-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.bagua-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #5d4037;
+  display: inline-block;
+  background: linear-gradient(to right, #000 50%, #fff 50%);
+  position: relative;
+  overflow: hidden;
+  animation: rotate 15s linear infinite;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.bagua-circle::before,
+.bagua-circle::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #000;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.bagua-circle::after {
+  background-color: #fff;
+  top: auto;
+  bottom: 40px;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 表单样式 */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  color: #5d4037;
   font-weight: 500;
-  color: #5D4037;
 }
 
 input[type="date"],
-input[type="number"],
 select {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #D2B48C;
-  border-radius: 8px;
-  background-color: #fff;
+  padding: 10px;
+  border: 1px solid #d7ccc8;
+  border-radius: 6px;
   font-size: 16px;
-  transition: all 0.3s ease;
+  background-color: #f5f5f5;
+  transition: border-color 0.3s ease;
 }
 
 input[type="date"]:focus,
-input[type="number"]:focus,
 select:focus {
   outline: none;
-  border-color: #8B4513;
-  box-shadow: 0 0 5px rgba(139, 69, 19, 0.3);
+  border-color: #8d6e63;
+  box-shadow: 0 0 5px rgba(141, 110, 99, 0.3);
 }
 
 /* 按钮样式 */
 button {
-  background-color: #8B4513;
-  color: white;
-  padding: 14px 24px;
+  background-color: #8d6e63;
+  color: #fff;
+  padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 18px;
+  border-radius: 6px;
+  font-size: 16px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
   width: 100%;
+  margin-top: 10px;
 }
 
 button:hover {
-  background-color: #A0522D;
+  background-color: #795548;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 button:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
-/* 结果区域 */
+/* 结果显示样式 */
 .results {
-  margin-top: 40px;
-  padding: 20px;
-  background-color: #fcf8f3;
-  border-radius: 10px;
-  border: 1px solid #D2B48C;
+  margin-top: 30px;
 }
 
-.results p {
-  margin-bottom: 15px;
-  line-height: 1.6;
-  color: #3E2723;
+#baziOutput {
+  font-size: 24px;
+  font-weight: 600;
+  color: #5d4037;
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f5f1;
+  border-radius: 8px;
 }
 
-/* 五行显示 */
 .wuxing-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 30px 0;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .wuxing-item {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  margin: 10px;
-  font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
 }
 
 .wuxing-item:hover {
@@ -148,105 +193,59 @@ button:active {
 }
 
 .wuxing-item.wood {
-  background-color: #4CAF50;
-  color: white;
+  background-color: #4caf50;
 }
 
 .wuxing-item.fire {
-  background-color: #F44336;
-  color: white;
+  background-color: #f44336;
 }
 
 .wuxing-item.earth {
-  background-color: #FF9800;
-  color: white;
+  background-color: #ff9800;
 }
 
 .wuxing-item.metal {
-  background-color: #9E9E9E;
-  color: white;
+  background-color: #9e9e9e;
 }
 
 .wuxing-item.water {
-  background-color: #2196F3;
-  color: white;
+  background-color: #2196f3;
 }
 
-/* 八卦图 */
-.bagua-container {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.bagua-circle {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 4px solid #8B4513;
-  display: inline-block;
-  position: relative;
-  background: linear-gradient(90deg, #000 50%, #fff 50%);
-  overflow: hidden;
-  animation: rotate 20s linear infinite;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-}
-
-.bagua-circle::before,
-.bagua-circle::after {
-  content: '';
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-}
-
-.bagua-circle::before {
-  left: 25%;
-  background-color: #000;
-  border: 12px solid #fff;
-}
-
-.bagua-circle::after {
-  right: 25%;
-  background-color: #fff;
-  border: 12px solid #000;
-}
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+#analysisOutput {
+  background-color: #f9f5f1;
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.6;
+  color: #5d4037;
 }
 
 /* 响应式设计 */
 @media (max-width: 600px) {
+  body {
+    padding: 10px;
+  }
+  
   .container {
     padding: 20px;
     margin-top: 20px;
   }
   
   h1 {
-    font-size: 2rem;
+    font-size: 24px;
   }
   
   h2 {
-    font-size: 1.5rem;
+    font-size: 20px;
   }
   
   .wuxing-item {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     font-size: 14px;
   }
   
-  .bagua-circle {
-    width: 140px;
-    height: 140px;
+  #baziOutput {
+    font-size: 20px;
   }
 }
