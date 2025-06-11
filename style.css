@@ -41,6 +41,11 @@ h2 {
 }
 
 /* Input and button styles */
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
 label {
     display: block;
     margin: 15px 0 5px;
@@ -214,11 +219,6 @@ table tbody tr:hover {
 .wuxing:hover {
     color: #0056b3;
     text-decoration: underline;
-}
-
-/* Remove default Google Translate widget styles if not used */
-#google_translate_element {
-    display: none;
 }
 
 /* Modal styles (if you plan to use the modal from previous version) */
