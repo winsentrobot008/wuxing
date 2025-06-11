@@ -3,64 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>生辰八字测算 | 五行分析</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>生辰八字测算结果</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* 结果卡片样式 */
+    .result-card {
+      background: linear-gradient(145deg, #f5f5f5, #ffffff);
+      border-radius: 18px;
+      box-shadow: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
+      padding: 30px;
+      margin: 20px 0;
+      transition: all 0.3s ease;
+    }
+    
+    .result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff;
+    }
+    
+    /* 标题样式 */
+    .result-title {
+      display: flex;
+      align-items: center;
+      color: #8B4513;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #D2B48C;
+    }
+    
+    .result-title i {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    
+    /* 五行可视化 */
+    .wuxing-chart {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 15px 0;
+    }
+    
+    .wuxing-item {
+      display: flex;
+      align-items: center;
+      margin: 8px;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .wuxing-item i {
+      width: 20px;
+      text-align: center;
+      margin-right: 5px;
+    }
+    
+    .wood { background-color: #a7d30c; color: #333; }
+    .fire { background-color: #f27405; color: #fff; }
+    .earth { background-color: #d97706; color: #fff; }
+    .metal { background-color: #9ca3af; color: #333; }
+    .water { background-color: #3b82f6; color: #fff; }
+    
+    /* 警示信息 */
+    .warning {
+      background-color: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 10px 15px;
+      margin: 15px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    
+    /* 建议标签 */
+    .recommend-tag {
+      display: inline-block;
+      background-color: #3b82f6;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .recommend-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* 生肖图标 */
+    .zodiac-icon {
+      font-size: 28px;
+      margin-right: 10px;
+      color: #8B4513;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>生辰八字测算与五行分析</h1>
+    <h1>生辰八字测算结果</h1>
     
-    <div class="bagua-container">
-      <div class="bagua-circle"></div>
+    <div class="result-card">
+      <div class="result-title">
+        <i class="fa fa-calendar"></i> 出生日期信息
+      </div>
+      <p><span style="font-weight: bold;">农历：</span>二〇二五年 三月 廿一日</p>
+      <p>
+        <span style="font-weight: bold;">生肖：</span>
+        <i class="zodiac-icon fa fa-snake"></i>蛇
+      </p>
+      <p><span style="font-weight: bold;">八字：</span>乙巳 庚辰 丁巳 (未知)</p>
+      <p><span style="font-weight: bold;">纳音五行：</span>覆灯火</p>
     </div>
     
-    <form id="baziForm">
-      <div class="form-group">
-        <label for="birthDate">出生日期</label>
-        <input type="date" id="birthDate" required>
+    <div class="result-card">
+      <div class="result-title">
+        <i class="fa fa-pie-chart"></i> 五行分布分析
       </div>
-      
-      <div class="form-group">
-        <label for="birthHour">出生时辰</label>
-        <select id="birthHour" required>
-          <option value="">请选择时辰</option>
-          <option value="0">子时 (23:00-01:00)</option>
-          <option value="1">丑时 (01:00-03:00)</option>
-          <option value="2">寅时 (03:00-05:00)</option>
-          <option value="3">卯时 (05:00-07:00)</option>
-          <option value="4">辰时 (07:00-09:00)</option>
-          <option value="5">巳时 (09:00-11:00)</option>
-          <option value="6">午时 (11:00-13:00)</option>
-          <option value="7">未时 (13:00-15:00)</option>
-          <option value="8">申时 (15:00-17:00)</option>
-          <option value="9">酉时 (17:00-19:00)</option>
-          <option value="10">戌时 (19:00-21:00)</option>
-          <option value="11">亥时 (21:00-23:00)</option>
-        </select>
+      <div class="wuxing-chart">
+        <div class="wuxing-item wood">
+          <i class="fa fa-leaf"></i> metal：1个
+        </div>
+        <div class="wuxing-item wood">
+          <i class="fa fa-leaf"></i> wood：1个
+        </div>
+        <div class="wuxing-item water">
+          <i class="fa fa-tint"></i> water：0个
+        </div>
+        <div class="wuxing-item fire">
+          <i class="fa fa-fire"></i> fire：3个
+        </div>
+        <div class="wuxing-item earth">
+          <i class="fa fa-mountain"></i> earth：1个
+        </div>
       </div>
-      
-      <div class="form-group">
-        <label for="gender">性别</label>
-        <select id="gender" required>
-          <option value="male">男</option>
-          <option value="female">女</option>
-        </select>
+      <div class="warning">
+        <strong>五行不均：</strong>water偏弱，fire偏旺
       </div>
-      
-      <button type="button" id="calculateBtn">计算八字与五行</button>
-    </form>
+    </div>
     
-    <div id="results" class="results">
-      <h2>测算结果</h2>
-      <div id="baziOutput"></div>
-      
-      <div class="wuxing-container" id="wuxingDisplay"></div>
-      
-      <div id="analysisOutput"></div>
+    <div class="result-card">
+      <div class="result-title">
+        <i class="fa fa-lightbulb-o"></i> 用神建议
+      </div>
+      <p>建议起名偏向「water」五行，推荐字：</p>
+      <div>
+        <span class="recommend-tag">涵</span>
+        <span class="recommend-tag">涛</span>
+        <span class="recommend-tag">润</span>
+        <span class="recommend-tag">洁</span>
+        <span class="recommend-tag">沛</span>
+      </div>
+    </div>
+    
+    <div class="result-card">
+      <div class="result-title">
+        <i class="fa fa-user"></i> 命格性格提示
+      </div>
+      <p>您五行中“water”较弱，建议加强该方面特质培养。</p>
+      <p>大致命格性格倾向：<strong>聪明机智，思维活跃</strong>。</p>
     </div>
   </div>
-
-  <script src="script.js"></script>
 </body>
 </html>
