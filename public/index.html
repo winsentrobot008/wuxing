@@ -4,115 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>生辰八字五行测算</title>
-  
+
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#3498db"> 
 
-  <style>
-    /* 你原来的 CSS 样式 */
-    body {
-      font-family: "Microsoft YaHei", sans-serif;
-      padding: 20px;
-      margin: 0;
-      background-color: #f7f7f7;
-      color: #333;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #2c3e50;
-    }
-
-    label {
-      display: inline-block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    input[type="date"],
-    input[type="number"],
-    select {
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 180px;
-    }
-
-    input[type="checkbox"] {
-      margin-left: 8px;
-    }
-
-    button {
-      padding: 10px 18px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-      margin-right: 10px;
-    }
-
-    button:hover {
-      background-color: #2880b9;
-    }
-
-    #result {
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      max-width: 700px; /* 调整最大宽度 */
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .chart-container {
-        display: flex;
-        flex-wrap: wrap; /* 允许图表换行 */
-        justify-content: center; /* 水平居中 */
-        gap: 20px; /* 图表之间的间距 */
-        margin-top: 30px;
-    }
-
-    canvas {
-      display: block;
-      /* margin: 30px auto; */ /* 这里的 margin 已经被 .chart-container 的 gap 和 justify-content 替代 */
-      max-width: 100%;
-      height: 250px; /* 限制高度，让图表大小更统一 */
-      width: 300px; /* 初始宽度 */
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      input,
-      select {
-        width: 100%;
-      }
-
-      #result {
-        padding: 15px;
-      }
-
-      button {
-        width: 100%;
-      }
-      canvas {
-          height: 200px; /* 移动端减小高度 */
-          width: 90%; /* 移动端宽度占满 */
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  </head>
+
+</head>
 <body>
 
   <div class="container"> <h2>生辰八字五行测算</h2>
@@ -140,6 +40,24 @@
         <canvas id="wuxingRadarChart"></canvas>
         <canvas id="wuxingBarChart"></canvas>
     </div>
-  </div> <script src="script.js"></script>
+  </div> 
+
+  <script src="lunar.js"></script>
+  <script src="calculateBazi.js"></script>
+  <script src="script.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(error => {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
