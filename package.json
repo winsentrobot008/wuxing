@@ -1,0 +1,14 @@
+{
+  "name": "your-bazi-pwa",
+  "version": "1.0.0",
+  "description": "生辰八字五行测算 PWA 应用",
+  "main": "api/calculate-bazi.js",
+  "scripts": {
+    "start": "node api/calculate-bazi.js"
+  },
+  "dependencies": {
+    // 你的 Node.js 库文件（lunar.js 和 calculateBazi.js）通常不需要作为 npm 依赖列出
+    // 因为你直接把它们放在了 api/ 目录，并通过 require() 引用
+    // 如果你的后端函数未来需要其他 npm 包，再添加到这里
+  }
+}
