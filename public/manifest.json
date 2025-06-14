@@ -1,26 +1,21 @@
-// public/manifest.json
-
 {
-  "name": "八字五行测算",         // 应用的全名，会显示在安装提示或应用列表中
-  "short_name": "八字测算",        // 应用的短名称，显示在桌面图标下方
-  "description": "生辰八字五行测算与分析工具", // 应用的简短描述
-  "start_url": "/",                 // 用户点击桌面图标时，应用从哪个页面开始加载（/ 表示网站根目录）
-  "display": "standalone",          // 应用的显示模式：
-                                    // "standalone" 表示像独立应用一样全屏显示，隐藏浏览器地址栏
-                                    // 你也可以试试 "fullscreen" (完全全屏，无状态栏) 或 "minimal-ui" (保留最小的浏览器UI)
-  "background_color": "#f7f7f7",    // 应用启动画面（加载时）的背景色
-  "theme_color": "#3498db",         // 应用程序的主题颜色，影响浏览器地址栏或状态栏的颜色
-  "icons": [                        // 应用图标列表，不同尺寸的图标
+  "name": "八字五行测算",
+  "short_name": "八字五行",
+  "description": "一个提供生辰八字和五行分析的工具。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
+  "icons": [
     {
-      "src": "/icons/icon-192x192.png", // 你的图标文件路径
-      "sizes": "192x192",               // 尺寸
-      "type": "image/png"               // 文件类型
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png", // 你的图标文件路径
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-    // 你可以根据需要添加更多尺寸的图标，但这两个是PWA最常用的
   ]
 }
