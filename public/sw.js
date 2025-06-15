@@ -1,56 +1,61 @@
-const CACHE_NAME = 'bazi-calculator-v1'; // 缓存版本名称
+const CACHE_NAME = 'bazi-pwa-v1';
 const urlsToCache = [
-  '/', // 缓存首页
+  '/',
   '/index.html',
-  '/style.css', // 现在 CSS 是一个独立文件了
+  '/style.css',
   '/script.js',
   '/lunar.js',
   '/calculateBazi.js',
   '/manifest.json',
-  '/sw.js', // Service Worker 自己也需要被缓存
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png',
-  'https://cdn.jsdelivr.net/npm/chart.js' // 缓存 Chart.js 库
+  '/icons/icon-512x512.png'
+  // 如果 Chart.js 已经下载到本地，比如 /libs/chart.js，则加上 '/libs/chart.js'
 ];
 
-// 安装 Service Worker 并缓存所有文件
+// 安装 Service Worker 并缓存静态资源
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
+      .then(cache => cache.addAll(urlsToCache))
   );
-});
-
-// 拦截网络请求，优先从缓存中获取资源
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // 如果缓存中有，则返回缓存的资源
-        if (response) {
-          return response;
-        }
-        // 否则，从网络获取
-        return fetch(event.request);
-      })
-  );
+  self.skipWaiting(); // 立即激活新 Service Worker
 });
 
 // 激活 Service Worker，清理旧缓存
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName); // 删除旧版本缓存
-          }
-        })
+        cacheNames.filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
       );
     })
+  );
+  self.clients.claim(); // 让新 Service Worker 立即接管页面
+});
+
+// 拦截请求，优先从缓存读取，缓存未命中则走网络
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request)
+          .then(networkResponse => {
+            // 可选：动态缓存新请求的资源
+            // const responseClone = networkResponse.clone();
+            // caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseClone));
+            return networkResponse;
+          })
+          .catch(() => {
+            // 可选：离线时兜底页面
+            // if (event.request.destination === 'document') {
+            //   return caches.match('/offline.html');
+            // }
+          });
+      })
   );
 });
