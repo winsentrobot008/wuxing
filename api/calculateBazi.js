@@ -30,7 +30,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
 
     let analysis = "";
     for (const k in wuxingCounts) {
-        analysis += `${k}：${wuxingCounts[k]}个\n`;
+        analysis += `${k}: ${wuxingCounts[k]} items\n`;
     }
 
     const total = Object.values(wuxingCounts).reduce((a, b) => a + b, 0);
@@ -39,16 +39,16 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
 
     for (const k in wuxingCounts) {
         if (wuxingCounts[k] > avg * 1.5) {
-            imbalances.push(`${k}偏旺`);
+            imbalances.push(`${k} is strong`);
         } else if (wuxingCounts[k] < avg * 0.5) {
-            imbalances.push(`${k}偏弱`);
+            imbalances.push(`${k} is weak`);
         }
     }
 
     if (imbalances.length > 0) {
-        analysis += `\n⚠️ 五行不均：${imbalances.join("，")}`;
+        analysis += `\n⚠️ Imbalance in elements: ${imbalances.join(", ")}`;
     } else {
-        analysis += `\n✅ 五行较为平衡`;
+        analysis += `\n✅ Elements are relatively balanced`;
     }
 
     // 纳音五行表（来自 lunar.js）
@@ -59,10 +59,10 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         noHour ? '(未知)' : lunar.getTimeNaYin()
     ];
     const nayinTable = `
-    年柱：${nayins[0]}  
-    月柱：${nayins[1]}  
-    日柱：${nayins[2]}  
-    时柱：${nayins[3]}`;
+Year Pillar: ${nayins[0]}  
+Month Pillar: ${nayins[1]}  
+Day Pillar: ${nayins[2]}  
+Hour Pillar: ${nayins[3]}`;
 
     // 日主五行分析
     const riGan = eightChar.getDayGan();
@@ -88,8 +88,8 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         usefulElement = elementControl[riElement]['生我']; // 得生
     }
 
-    const yongshenAdvice = `您的日主为【${riGan}】，五行属【${riElement}】，属于“${strong ? "身强" : "身弱"}”之命。<br>
-推荐喜用神方向：${usefulElement} → 宜补此五行助运。`;
+    const yongshenAdvice = `Your Day Master is 【${riGan}】, belonging to the element 【${riElement}】, considered as "${strong ? "strong" : "weak"}". <br>
+Recommended favorable element direction: ${usefulElement} → It is advisable to enhance this element for better fortune.`;
 
     const nameDict = {
         wood: ['林', '森', '荣', '楠', '桐'],
@@ -99,7 +99,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         earth: ['坤', '垚', '均', '城', '培']
     };
 
-    const nameAdvice = `推荐用神五行为：${usefulElement}，适合名字偏向：${nameDict[usefulElement].join('、')}。`;
+    const nameAdvice = `Recommended favorable element: ${usefulElement}, suitable names include: ${nameDict[usefulElement].join(', ')}.`;
 
     const characterHintMap = {
         wood: "仁义直爽，重情重义。",
@@ -108,7 +108,7 @@ function calculateBazi(eightChar, noHour, gender, lunar) {
         metal: "果断刚毅，有正义感。",
         water: "聪明机智，思维活跃。"
     };
-    const characterSummary = `您命中偏向“${riElement}”，喜用神为“${usefulElement}”，宜培养此方面人格。\n性格倾向：${characterHintMap[riElement]}`;
+    const characterSummary = `Your fate leans towards "${riElement}", with the favorable element being "${usefulElement}", it is advisable to cultivate this aspect of personality.\nPersonality tendency: ${characterHintMap[riElement]}`;
 
     return {
         wuxingCounts,
