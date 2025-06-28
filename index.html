@@ -1,140 +1,117 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <title>我的五行助手</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>🌿 五行日测 🌿</h1>
-  <input type="date" id="birthday">
-  <button onclick="start()">开始测算</button>
-  <div id="output"></div>
-=======
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Birthdate Bazi Five Elements Calculation</title>
+  <meta charset="UTF-8" />
+  <title>五行命盘测算</title>
   <style>
     body {
-      font-family: "Microsoft YaHei", sans-serif;
-      padding: 20px;
-      margin: 0;
-      background-color: #f7f7f7;
-      color: #333;
+      font-family: sans-serif;
+      background: #f2f2f2;
+      padding: 2em;
+      max-width: 500px;
+      margin: auto;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #2c3e50;
-    }
-
     label {
-      display: inline-block;
-      margin-bottom: 6px;
-      font-weight: bold;
-    }
-
-    input[type="date"],
-    input[type="number"],
-    select {
-      padding: 6px 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      width: 180px;
-    }
-
-    input[type="checkbox"] {
-      margin-left: 8px;
-    }
-
-    button {
-      padding: 10px 18px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    #result {
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    canvas {
       display: block;
-      margin: 30px auto;
-      max-width: 100%;
+      margin-top: 1em;
     }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-
-      input,
-      select {
-        width: 100%;
-      }
-
-      #result {
-        padding: 15px;
-      }
-
-      button {
-        width: 100%;
-      }
+    input, select {
+      width: 100%;
+      padding: 0.6em;
+      margin-top: 0.3em;
+      font-size: 1em;
+    }
+    .checkbox {
+      margin-top: 0.6em;
+    }
+    button {
+      margin-top: 2em;
+      padding: 0.8em;
+      width: 100%;
+      font-size: 1.1em;
+      background: #4CAF50;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+    }
+    #result {
+      margin-top: 2em;
+      padding: 1em;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 <body>
 
-  <h2>Birthdate Bazi Five Elements Calculation</h2>
+  <h2>🌿 五行命盘测算</h2>
 
-  <label>Please enter birthdate (Gregorian):</label>
-  <input type="date" id="birthday"><br><br>
+  <label>姓名</label>
+  <input type="text" id="name" placeholder="请输入姓名">
 
-  <label>Birth hour (0-23):</label>
-  <input type="number" id="hour" min="0" max="23">
-  <label><input type="checkbox" id="noHour"> Unknown birth hour</label><br><br>
-
-  <label>Gender:</label>
+  <label>性别</label>
   <select id="gender">
-    <option value="male">Male</option>
-    <option value="female">Female</option>
-  </select><br><br>
+    <option value="">请选择</option>
+    <option value="male">男</option>
+    <option value="female">女</option>
+  </select>
 
-  <button onclick="calculateWuXing()">Calculate Five Elements</button>
+  <label>出生日期</label>
+  <input type="date" id="birthday">
 
-  <div id="result" style="margin-top:20px; white-space: pre-wrap;"></div>
+  <label>出生时辰</label>
+  <select id="hour" disabled>
+    <option value="">请选择出生时辰</option>
+    <option value="23">子时（23:00~01:00）</option>
+    <option value="1">丑时（01:00~03:00）</option>
+    <option value="3">寅时（03:00~05:00）</option>
+    <option value="5">卯时（05:00~07:00）</option>
+    <option value="7">辰时（07:00~09:00）</option>
+    <option value="9">巳时（09:00~11:00）</option>
+    <option value="11">午时（11:00~13:00）</option>
+    <option value="13">未时（13:00~15:00）</option>
+    <option value="15">申时（15:00~17:00）</option>
+    <option value="17">酉时（17:00~19:00）</option>
+    <option value="19">戌时（19:00~21:00）</option>
+    <option value="21">亥时（21:00~23:00）</option>
+  </select>
+  <div class="checkbox">
+    <input type="checkbox" id="unknownHour" onclick="toggleHour()"> 不知道出生时辰
+  </div>
 
-  <canvas id="wuxingRadarChart" width="300" height="300" style="margin-top: 20px;"></canvas>
-  <canvas id="wuxingBarChart" width="300" height="300" style="margin-top: 20px;"></canvas>
+  <label>出生城市</label>
+  <input type="text" id="city" placeholder="如 北京 / 台北 / 香港 / Tokyo">
 
-  <!-- 引入 Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <button onclick="submitForm()">立即测算</button>
 
-  <!-- 你自己的脚本 -->
-  <script src="lunar.js"></script>
-  <script src="calculateBazi.js"></script>
->>>>>>> fd44ed227c4c873222da89d929399e470684ee8d
-  <script src="script.js"></script>
+  <div id="result"></div>
+
+  <script>
+    function toggleHour() {
+      const cb = document.getElementById('unknownHour');
+      const hourSelect = document.getElementById('hour');
+      hourSelect.disabled = cb.checked;
+    }
+
+    function submitForm() {
+      const name = document.getElementById('name').value;
+      const gender = document.getElementById('gender').value;
+      const birthday = document.getElementById('birthday').value;
+      const hour = document.getElementById('hour').value;
+      const unknownHour = document.getElementById('unknownHour').checked;
+      const city = document.getElementById('city').value;
+
+      let output = `<strong>姓名：</strong>${name || '未填写'}<br>`;
+      output += `<strong>性别：</strong>${gender === 'male' ? '男' : gender === 'female' ? '女' : '未选择'}<br>`;
+      output += `<strong>生日：</strong>${birthday || '未选择'}<br>`;
+      output += `<strong>出生时辰：</strong>${unknownHour ? '未知' : hour || '未选择'}<br>`;
+      output += `<strong>出生城市：</strong>${city || '未填写'}<br><br>`;
+      output += `🎯 <strong>五行分析结果将在后端进行推算</strong>`;
+
+      document.getElementById('result').innerHTML = output;
+    }
+  </script>
+
 </body>
 </html>
