@@ -1,20 +1,41 @@
-function start() {
-  const date = document.getElementById('birthday').value;
+document.getElementById('submit-btn').addEventListener('click', async function () {
+  const name = document.getElementById('name')?.value.trim();
+  const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+  const birthday = document.getElementById('birthday')?.value;
+  const hourUnknown = document.getElementById('hour-unknown')?.checked;
+  const hour = hourUnknown ? '未知' : document.getElementById('hour')?.value || '未知';
+  const city = document.getElementById('city')?.value.trim();
   const output = document.getElementById('output');
-  if (!date) {
-    output.innerHTML = '<p style="color:red">请输入你的出生日期</p>';
+
+  if (!birthday || !name || !city || !gender) {
+    output.innerHTML = '<p style="color:red;">请填写完整的出生信息</p>';
     return;
   }
 
-  // 模拟五行结果（演示用）
-  const elements = ['金', '木', '水', '火', '土'];
-  const scores = elements.map(() => Math.floor(Math.random() * 30) + 10);
-  const dominant = elements[scores.indexOf(Math.max(...scores))];
+  output.innerHTML = '🧮 AI 正在排盘测算，请稍候…';
 
-  output.innerHTML = `
-    <h2>✨ 五行分布 ✨</h2>
-    <p>金：${scores[0]} | 木：${scores[1]} | 水：${scores[2]} | 火：${scores[3]} | 土：${scores[4]}</p>
-    <p><strong>主元素：</strong>${dominant}</p>
-    <p>🌟 建议颜色：${dominant === '火' ? '红' : dominant === '水' ? '蓝' : dominant === '金' ? '白' : dominant === '木' ? '绿' : '黄'}</p>
-  `;
-}
+  try {
+    const res = await fetch('/api/gpt.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        gender,
+        birthday,
+        hour,
+        city
+      })
+    });
+
+    const data = await res.json();
+    output.innerHTML = `
+      <div class="result-card">
+        <h2>🌟 命盘解析结果</h2>
+        <p>${data.result.replace(/\n/g, '<br>')}</p>
+      </div>
+    `;
+  } catch (error) {
+    console.error('请求失败：', error);
+    output.innerHTML = '<p style="color:red;">😢 请求失败，请检查网络或稍后再试</p>';
+  }
+});
