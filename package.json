@@ -1,0 +1,22 @@
+{
+  "name": "bazi_tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bagua-animation.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winsentrobot/five-elements.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/winsentrobot/five-elements/issues"
+  },
+  "homepage": "https://github.com/winsentrobot/five-elements#readme",
+  "dependencies": {} // 确保这里是空的，或者只有你明确需要的依赖
+}
