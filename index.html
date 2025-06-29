@@ -100,24 +100,7 @@
   <div id="result"></div>
 
   <script>
-    const DEMO_MODE = true;
-
-    const demoResults = [
-      `🧧【阳木命主 · 翠竹生辉】
-你属阳木，性格刚正、有担当。宜亲近水木之地，调和心性。
-幸运颜色：碧绿、湖蓝。
-诗曰：「竹影清风心自静，幽人雅志韵长存。」`,
-
-      `🕊️【阴水之灵 · 月照寒潭】
-命主属阴水，聪慧敏感，思维深远。适合夜间创作与静心养生。
-幸运颜色：银灰、深蓝。
-诗曰：「寒潭月影心如镜，水中藏梦胜千言。」`,
-
-      `🔥【丙火之耀 · 赤焰流光】
-五行属丙火，命如朝阳，热情奔放、敢作敢为。适合传播型职业。
-幸运颜色：赤红、橙金。
-诗曰：「火来炼志光千丈，一念生莲照万家。」`
-    ];
+    const DEMO_MODE = false;  // 关闭演示模式，启用 Gemini 调用
 
     function toggleHour() {
       document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
@@ -139,20 +122,23 @@
       resultEl.innerHTML = '🧮 正在测算，请稍候...';
 
       if (DEMO_MODE) {
+        // 如需调试 demo，可临时开启
+        const randoms = [
+          `🧧【阳木命主 · 翠竹生辉】…`,
+          `🕊️【阴水之灵 · 月照寒潭】…`,
+          `🔥【丙火之耀 · 赤焰流光】…`
+        ];
         setTimeout(() => {
-          const randomResult = demoResults[Math.floor(Math.random() * demoResults.length)];
-          resultEl.innerHTML = `<div class="demo-banner">⚠ 当前为【演示模式】，GPT 正在闭关修炼中 ✨</div><h3>🔮 模拟命盘分析</h3><p>${randomResult.replace(/\n/g, '<br>')}</p>`;
-        }, 1000);
+          const r = randoms[Math.floor(Math.random() * randoms.length)];
+          resultEl.innerHTML = `<div class="demo-banner">⚠ 演示模式启用，显示模拟结果 ✨</div><p>${r.replace(/\n/g, '<br>')}</p>`;
+        }, 800);
         return;
       }
 
       try {
-        const res = await fetch('/api/gpt.js', {
+        const res = await fetch('/api/gemini.js', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-secret-key': 'my-secret-key-888'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, gender, birthday, hour, city })
         });
 
