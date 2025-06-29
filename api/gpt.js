@@ -1,76 +1,60 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-import fetch from 'node-fetch';
-
-console.log("🔑 你当前的 API Key 是：", process.env.OPENAI_API_KEY);
-
 export default async function handler(req, res) {
-  const { name, gender, birthday, hour, city } = req.body;
+  // 限制仅允许 POST 请求
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: '只支持 POST 请求' });
+  }
 
+  // ✅ 校验来源域名 Referer（防止盗链）
+  const allowedReferer = 'https://five-elements.netlify.app'; // 替换成你自己正式网址
+  const referer = req.headers.referer || '';
+  if (!referer.startsWith(allowedReferer)) {
+    console.warn(`[拦截] 非法来源请求：${referer}`);
+    return res.status(403).json({ error: 'Forbidden: 非法来源请求' });
+  }
+
+  // ✅ 校验密钥
+  const serverKey = process.env.INTERNAL_ACCESS_KEY;
+  const clientKey = req.headers['x-secret-key'];
+  if (!serverKey || clientKey !== serverKey) {
+    console.warn(`[拦截] 密钥验证失败：${clientKey}`);
+    return res.status(403).json({ error: 'Forbidden: 验证失败' });
+  }
+
+  // ✅ 校验参数完整性
+  const { name, gender, birthday, hour, city } = req.body || {};
+  if (!name || !gender || !birthday || !city) {
+    return res.status(400).json({ error: '缺少必要参数' });
+  }
+
+  // 构造命令 prompt
   const prompt = `
-你是一位资深国学大师，请根据以下出生信息进行五行分析，并用温和文艺的口吻写出结果和建议：
-
-- 姓名：${name || '未知'}
-- 性别：${gender || '未知'}
-- 生日：${birthday || '未知'}
-- 出生时辰：${hour || '未知'}
-- 出生城市：${city || '未知'}
-
-请分析其五行分布、主五行、性格特点，并给出有诗意的生活建议和幸运颜色。
+用户：${name}，性别：${gender}，出生：${birthday} ${hour}，城市：${city}
+请用国风文风，分析命主的五行格局，性格特质，人生建议，附上一句诗收尾。
 `;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
+    const apiKey = process.env.OPENAI_API_KEY;
+    const completion = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.8,
-      }),
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8
+      })
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ OpenAI API 请求失败：", errorText);
-      res.status(500).json({ result: `服务器返回错误：${errorText}` });
-      return;
-    }
+    const data = await completion.json();
+    const result = data.choices?.[0]?.message?.content || '命盘解析失败，请稍后再试';
 
-    const data = await response.json();
-    res.status(200).json({ result: data.choices[0].message.content });
+    console.log(`[成功] ${name} 请求测算完成`);
+    return res.status(200).json({ result });
 
   } catch (err) {
-    console.error("❌ 请求过程发生异常：", err.message);
-    res.status(500).json({ result: `服务器异常，请稍后重试：${err.message}` });
+    console.error('[错误] GPT 请求失败：', err);
+    return res.status(500).json({ error: '服务暂不可用，请稍后再试' });
   }
-}
-
-// ✅ 本地测试触发逻辑
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const req = {
-    body: {
-      name: "小白",
-      gender: "female",
-      birthday: "1990-06-28",
-      hour: "午时",
-      city: "杭州"
-    }
-  };
-
-  const res = {
-    status: (code) => ({
-      json: (data) => {
-        console.log(`\n🔔 状态码：${code}`);
-        console.log("🧧 AI 返回结果：\n");
-        console.log(data.result);
-      }
-    })
-  };
-
-  handler(req, res);
 }

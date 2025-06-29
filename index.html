@@ -149,7 +149,10 @@
       try {
         const res = await fetch('/api/gpt.js', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+         headers: {
+  'Content-Type': 'application/json',
+  'x-secret-key': 'my-secret-key-888' // 注意：这行是我们自己定义的密钥
+}
           body: JSON.stringify({ name, gender, birthday, hour, city })
         });
 
