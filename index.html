@@ -11,46 +11,25 @@
       max-width: 500px;
       margin: auto;
     }
-    label {
-      display: block;
-      margin-top: 1em;
-    }
+    label { display: block; margin-top: 1em; }
     input, select {
-      width: 100%;
-      padding: 0.6em;
-      margin-top: 0.3em;
-      font-size: 1em;
+      width: 100%; padding: 0.6em; margin-top: 0.3em; font-size: 1em;
     }
-    .checkbox {
-      margin-top: 0.6em;
-    }
+    .checkbox { margin-top: 0.6em; }
     button {
-      margin-top: 2em;
-      padding: 0.8em;
-      width: 100%;
-      font-size: 1.1em;
-      background: #4CAF50;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
+      margin-top: 2em; padding: 0.8em; width: 100%;
+      font-size: 1.1em; background: #4CAF50; color: #fff;
+      border: none; border-radius: 6px;
     }
     #result {
-      margin-top: 2em;
-      padding: 1em;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.1);
-      white-space: pre-line;
-      line-height: 1.6;
+      margin-top: 2em; padding: 1em; background: #fff;
+      border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      white-space: pre-line; line-height: 1.6;
     }
     .demo-banner {
-      background: #fffbe6;
-      color: #d48806;
-      padding: 10px 14px;
-      border-left: 5px solid #faad14;
-      margin-bottom: 1em;
-      border-radius: 4px;
-      font-weight: 500;
+      background: #fffbe6; color: #d48806;
+      padding: 10px 14px; border-left: 5px solid #faad14;
+      margin-bottom: 1em; border-radius: 4px; font-weight: 500;
     }
   </style>
 </head>
@@ -100,16 +79,16 @@
   <div id="result"></div>
 
   <script>
-    // 根据当前域名动态选择后端地址
+    // —— 1. 根据当前域名动态选后端地址 —— 
     const hostname = window.location.hostname;
     const apiUrl = hostname.endsWith('netlify.app')
       ? 'https://five-elements-eta.vercel.app/api/gemini.js'
       : '/api/gemini.js';
 
-    // 演示模式开关，可回落
+    // —— 2. DEMO 模式可回落 —— 
     let DEMO_MODE = false;
 
-    // 模拟数据
+    // —— 3. 演示数据 —— 
     const demoResults = [
       `🧧【阳木命主 · 翠竹生辉】
 你属阳木，性格刚正、有担当。宜亲近水木之地，调和心性。
@@ -126,7 +105,8 @@
     ];
 
     function toggleHour() {
-      document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
+      document.getElementById('hour').disabled =
+        document.getElementById('unknownHour').checked;
     }
 
     document.getElementById('submit-btn').addEventListener('click', async () => {
@@ -139,14 +119,13 @@
       const city = document.getElementById('city').value.trim();
       const resultEl = document.getElementById('result');
 
-      // 表单校验
+      // —— 表单校验 —— 
       if (!name || !gender || !birthday || !city) {
         return showError('请填写完整的出生信息');
       }
-
       resultEl.innerHTML = '🧮 正在测算，请稍候...';
 
-      // 直接演示
+      // —— DEMO 逻辑 —— 
       if (DEMO_MODE) {
         setTimeout(() => {
           const r = demoResults[Math.floor(Math.random() * demoResults.length)];
@@ -161,7 +140,7 @@
         return;
       }
 
-      // 尝试请求后端
+      // —— 请求后端 —— 
       let res, text, data;
       try {
         res = await fetch(apiUrl, {
@@ -174,11 +153,12 @@
         return showError('请求失败，请检查网络', true);
       }
 
+      // —— 容错：非 JSON 或 HTML 响应自动切 DEMO —— 
       try {
         text = await res.text();
         data = JSON.parse(text);
       } catch (e) {
-        console.warn('非 JSON 响应，切回 DEMO 模式', e);
+        console.warn('非 JSON 响应，切回演示模式', e);
         return showError('❌ 服务暂不可用，已切换演示模式', true);
       }
 
@@ -189,10 +169,10 @@
       showResult(data.result);
     });
 
-    function showError(msg, isDemoFallback = false) {
-      const resultEl = document.getElementById('result');
-      if (isDemoFallback) DEMO_MODE = true;
-      resultEl.innerHTML = `<p style="color:red;">${msg}</p>`;
+    function showError(msg, fallback = false) {
+      if (fallback) DEMO_MODE = true;
+      document.getElementById('result').innerHTML =
+        `<p style="color:red;">${msg}</p>`;
     }
 
     function showResult(html) {
