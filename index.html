@@ -100,63 +100,108 @@
   <div id="result"></div>
 
   <script>
-  // 1️⃣ 根据域名自动选 API
-  const hostname = window.location.hostname;
-  const apiUrl = hostname.endsWith('netlify.app')
-    ? 'https://five-elements-eta.vercel.app/api/gemini.js'
-    : '/api/gemini.js';
+    // 根据当前域名动态选择后端地址
+    const hostname = window.location.hostname;
+    const apiUrl = hostname.endsWith('netlify.app')
+      ? 'https://five-elements-eta.vercel.app/api/gemini.js'
+      : '/api/gemini.js';
 
-  const DEMO_MODE = false; // 需要演示时再手动改成 true
+    // 演示模式开关，可回落
+    let DEMO_MODE = false;
 
-  function toggleHour() {
-    document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
-  }
+    // 模拟数据
+    const demoResults = [
+      `🧧【阳木命主 · 翠竹生辉】
+你属阳木，性格刚正、有担当。宜亲近水木之地，调和心性。
+幸运颜色：碧绿、湖蓝。
+诗曰：「竹影清风心自静，幽人雅志韵长存。」`,
+      `🕊️【阴水之灵 · 月照寒潭】
+命主属阴水，聪慧敏感，思维深远。适合夜间创作与静心养生。
+幸运颜色：银灰、深蓝。
+诗曰：「寒潭月影心如镜，水中藏梦胜千言。」`,
+      `🔥【丙火之耀 · 赤焰流光】
+五行属丙火，命如朝阳，热情奔放、敢作敢为。适合传播型职业。
+幸运颜色：赤红、橙金。
+诗曰：「火来炼志光千丈，一念生莲照万家。」`
+    ];
 
-  document.getElementById('submit-btn').addEventListener('click', async function () {
-    // 表单取值略…
-
-    if (DEMO_MODE) {
-      // … demo 逻辑
-      return;
+    function toggleHour() {
+      document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
     }
 
-    let data, res;
-    try {
-      res = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, gender, birthday, hour, city })
-      });
-    } catch (e) {
-      console.error('Network fetch error:', e);
-      return showError('请求失败，请检查网络');
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const name = document.getElementById('name').value.trim();
+      const gender = document.getElementById('gender').value;
+      const birthday = document.getElementById('birthday').value;
+      const hour = document.getElementById('unknownHour').checked
+        ? '未知'
+        : (document.getElementById('hour').value || '未知');
+      const city = document.getElementById('city').value.trim();
+      const resultEl = document.getElementById('result');
+
+      // 表单校验
+      if (!name || !gender || !birthday || !city) {
+        return showError('请填写完整的出生信息');
+      }
+
+      resultEl.innerHTML = '🧮 正在测算，请稍候...';
+
+      // 直接演示
+      if (DEMO_MODE) {
+        setTimeout(() => {
+          const r = demoResults[Math.floor(Math.random() * demoResults.length)];
+          resultEl.innerHTML = `
+            <div class="demo-banner">
+              ⚠ 当前为【演示模式】，GPT 正在闭关修炼中 ✨
+            </div>
+            <h3>🔮 模拟命盘分析</h3>
+            <p>${r.replace(/\n/g, '<br>')}</p>
+          `;
+        }, 800);
+        return;
+      }
+
+      // 尝试请求后端
+      let res, text, data;
+      try {
+        res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, gender, birthday, hour, city })
+        });
+      } catch (e) {
+        console.error('Network fetch error:', e);
+        return showError('请求失败，请检查网络', true);
+      }
+
+      try {
+        text = await res.text();
+        data = JSON.parse(text);
+      } catch (e) {
+        console.warn('非 JSON 响应，切回 DEMO 模式', e);
+        return showError('❌ 服务暂不可用，已切换演示模式', true);
+      }
+
+      if (!res.ok) {
+        return showError(`❌ 接口异常：${data.error || '未知错误'}`, true);
+      }
+
+      showResult(data.result);
+    });
+
+    function showError(msg, isDemoFallback = false) {
+      const resultEl = document.getElementById('result');
+      if (isDemoFallback) DEMO_MODE = true;
+      resultEl.innerHTML = `<p style="color:red;">${msg}</p>`;
     }
 
-    // 2️⃣ 容错：如果拿到页面 HTML，res.ok 也可能 true
-    const text = await res.text();
-    try {
-      data = JSON.parse(text);
-    } catch {
-      console.warn('非 JSON 响应，自动切回 DEMO 模式', text);
-      return showError('❌ 服务暂不可用，切回演示模式', true);
+    function showResult(html) {
+      document.getElementById('result').innerHTML = `
+        <h3>🔮 AI 返回的命盘分析</h3>
+        <p>${html.replace(/\n/g, '<br>')}</p>
+      `;
     }
-
-    if (!res.ok) {
-      return showError(`❌ 接口异常：${data.error || '未知错误'}`);
-    }
-    showResult(data.result);
-  });
-
-  function showError(msg, isDemoFallback = false) {
-    const resultEl = document.getElementById('result');
-    if (isDemoFallback) DEMO_MODE = true;
-    resultEl.innerHTML = `<p style="color:red;">${msg}</p>`;
-  }
-
-  function showResult(html) {
-    document.getElementById('result').innerHTML = `<h3>🔮 AI 返回的命盘分析</h3><p>${html.replace(/\n/g,'<br>')}</p>`;
-  }
-</script>
+  </script>
 
 </body>
 </html>
