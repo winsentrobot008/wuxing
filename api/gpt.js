@@ -5,7 +5,17 @@ export default async function handler(req, res) {
   }
 
   // ✅ 校验来源域名 Referer（防止盗链）
-  const allowedReferer = 'https://five-elements.netlify.app'; // 替换成你自己正式网址
+  const allowedReferers = [
+  'https://five-elements.netlify.app',
+  'https://five-elements-eta.vercel.app'
+];
+const referer = req.headers.referer || '';
+
+if (!allowedReferers.some(r => referer.startsWith(r))) {
+  console.warn('拦截非法来源：', referer);
+  return res.status(403).json({ error: 'Forbidden: 非法来源请求' });
+}
+ // 替换成你自己正式网址
   const referer = req.headers.referer || '';
   if (!referer.startsWith(allowedReferer)) {
     console.warn(`[拦截] 非法来源请求：${referer}`);
