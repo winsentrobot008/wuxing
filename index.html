@@ -95,12 +95,12 @@
   <label>出生城市</label>
   <input type="text" id="city" placeholder="如 北京 / 台北 / 香港 / Tokyo">
 
-  <button onclick="submitForm()">立即测算</button>
+  <button id="submit-btn">立即测算</button>
 
   <div id="result"></div>
 
   <script>
-    const DEMO_MODE = false; // 改为 true 可切换为演示模式
+    const DEMO_MODE = false;
 
     const demoResults = [
       `🧧【阳木命主 · 翠竹生辉】
@@ -123,12 +123,12 @@
       document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
     }
 
-    async function submitForm() {
-      const name = document.getElementById('name').value.trim();
-      const gender = document.getElementById('gender').value;
-      const birthday = document.getElementById('birthday').value;
-      const hour = document.getElementById('unknownHour').checked ? '未知' : document.getElementById('hour').value;
-      const city = document.getElementById('city').value.trim();
+    document.getElementById('submit-btn').addEventListener('click', async function () {
+      const name = document.getElementById('name')?.value.trim();
+      const gender = document.getElementById('gender')?.value;
+      const birthday = document.getElementById('birthday')?.value;
+      const hour = document.getElementById('unknownHour')?.checked ? '未知' : document.getElementById('hour')?.value || '未知';
+      const city = document.getElementById('city')?.value.trim();
       const resultEl = document.getElementById('result');
 
       if (!name || !gender || !birthday || !city) {
@@ -156,13 +156,27 @@
           body: JSON.stringify({ name, gender, birthday, hour, city })
         });
 
-        const data = await res.json();
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (e) {
+          console.error('JSON 解析失败：', e);
+          resultEl.innerHTML = '<p style="color:red;">❌ 服务器响应内容异常，请稍后重试</p>';
+          return;
+        }
+
+        if (!res.ok) {
+          resultEl.innerHTML = `<p style="color:red;">❌ 接口异常：${data.error || '未知错误'}</p>`;
+          return;
+        }
+
         resultEl.innerHTML = `<h3>🔮 AI 返回的命盘分析</h3><p>${data.result.replace(/\n/g, '<br>')}</p>`;
+
       } catch (error) {
-        resultEl.innerHTML = '<p style="color:red;">❌ 请求失败，请稍后再试</p>';
-        console.error(error);
+        console.error('请求失败：', error);
+        resultEl.innerHTML = '<p style="color:red;">❌ 请求失败，请检查网络或稍后再试</p>';
       }
-    }
+    });
   </script>
 
 </body>
