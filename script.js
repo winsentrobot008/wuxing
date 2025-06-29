@@ -17,7 +17,10 @@ document.getElementById('submit-btn').addEventListener('click', async function (
   try {
     const res = await fetch('/api/gpt.js', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-secret-key': 'my-secret-key-888' // 与服务器中 .env 保持一致
+      },
       body: JSON.stringify({
         name,
         gender,
@@ -27,7 +30,20 @@ document.getElementById('submit-btn').addEventListener('click', async function (
       })
     });
 
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (e) {
+      console.error('JSON 解析失败', e);
+      output.innerHTML = '<p style="color:red;">❌ 服务器响应格式异常，请稍后重试</p>';
+      return;
+    }
+
+    if (!res.ok) {
+      output.innerHTML = `<p style="color:red;">❌ 接口错误：${data.error || '未知错误'}</p>`;
+      return;
+    }
+
     output.innerHTML = `
       <div class="result-card">
         <h2>🌟 命盘解析结果</h2>
