@@ -100,70 +100,63 @@
   <div id="result"></div>
 
   <script>
-    const DEMO_MODE = false;  // 关闭演示模式，启用 Gemini 调用
+  // 1️⃣ 根据域名自动选 API
+  const hostname = window.location.hostname;
+  const apiUrl = hostname.endsWith('netlify.app')
+    ? 'https://five-elements-eta.vercel.app/api/gemini.js'
+    : '/api/gemini.js';
 
-    function toggleHour() {
-      document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
+  const DEMO_MODE = false; // 需要演示时再手动改成 true
+
+  function toggleHour() {
+    document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
+  }
+
+  document.getElementById('submit-btn').addEventListener('click', async function () {
+    // 表单取值略…
+
+    if (DEMO_MODE) {
+      // … demo 逻辑
+      return;
     }
 
-    document.getElementById('submit-btn').addEventListener('click', async function () {
-      const name = document.getElementById('name')?.value.trim();
-      const gender = document.getElementById('gender')?.value;
-      const birthday = document.getElementById('birthday')?.value;
-      const hour = document.getElementById('unknownHour')?.checked ? '未知' : document.getElementById('hour')?.value || '未知';
-      const city = document.getElementById('city')?.value.trim();
-      const resultEl = document.getElementById('result');
+    let data, res;
+    try {
+      res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, gender, birthday, hour, city })
+      });
+    } catch (e) {
+      console.error('Network fetch error:', e);
+      return showError('请求失败，请检查网络');
+    }
 
-      if (!name || !gender || !birthday || !city) {
-        resultEl.innerHTML = '<p style="color:red;">请填写完整的出生信息</p>';
-        return;
-      }
+    // 2️⃣ 容错：如果拿到页面 HTML，res.ok 也可能 true
+    const text = await res.text();
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.warn('非 JSON 响应，自动切回 DEMO 模式', text);
+      return showError('❌ 服务暂不可用，切回演示模式', true);
+    }
 
-      resultEl.innerHTML = '🧮 正在测算，请稍候...';
+    if (!res.ok) {
+      return showError(`❌ 接口异常：${data.error || '未知错误'}`);
+    }
+    showResult(data.result);
+  });
 
-      if (DEMO_MODE) {
-        // 如需调试 demo，可临时开启
-        const randoms = [
-          `🧧【阳木命主 · 翠竹生辉】…`,
-          `🕊️【阴水之灵 · 月照寒潭】…`,
-          `🔥【丙火之耀 · 赤焰流光】…`
-        ];
-        setTimeout(() => {
-          const r = randoms[Math.floor(Math.random() * randoms.length)];
-          resultEl.innerHTML = `<div class="demo-banner">⚠ 演示模式启用，显示模拟结果 ✨</div><p>${r.replace(/\n/g, '<br>')}</p>`;
-        }, 800);
-        return;
-      }
+  function showError(msg, isDemoFallback = false) {
+    const resultEl = document.getElementById('result');
+    if (isDemoFallback) DEMO_MODE = true;
+    resultEl.innerHTML = `<p style="color:red;">${msg}</p>`;
+  }
 
-      try {
-        const res = await fetch('/api/gemini.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, gender, birthday, hour, city })
-        });
-
-        let data = {};
-        try {
-          data = await res.json();
-        } catch (e) {
-          console.error('JSON 解析失败：', e);
-          resultEl.innerHTML = '<p style="color:red;">❌ 服务器响应内容异常，请稍后重试</p>';
-          return;
-        }
-
-        if (!res.ok) {
-          resultEl.innerHTML = `<p style="color:red;">❌ 接口异常：${data.error || '未知错误'}</p>`;
-          return;
-        }
-
-        resultEl.innerHTML = `<h3>🔮 AI 返回的命盘分析</h3><p>${data.result.replace(/\n/g, '<br>')}</p>`;
-
-      } catch (error) {
-        console.error('请求失败：', error);
-        resultEl.innerHTML = '<p style="color:red;">❌ 请求失败，请检查网络或稍后再试</p>';
-      }
-    });
-  </script>
+  function showResult(html) {
+    document.getElementById('result').innerHTML = `<h3>🔮 AI 返回的命盘分析</h3><p>${html.replace(/\n/g,'<br>')}</p>`;
+  }
+</script>
 
 </body>
 </html>
