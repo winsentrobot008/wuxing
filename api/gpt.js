@@ -34,6 +34,9 @@ export default async function handler(req, res) {
 
   try {
     const apiKey = process.env.OPENAI_API_KEY;
+console.log('[GPT 请求开始]');
+console.log('[Prompt 内容]', prompt);
+
     const completion = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
