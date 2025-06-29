@@ -20,24 +20,37 @@ export default async function handler(req, res) {
 请分析其五行分布、主五行、性格特点，并给出有诗意的生活建议和幸运颜色。
 `;
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.8,
-    }),
-  });
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.8,
+      }),
+    });
 
-  const data = await response.json();
-  res.status(200).json({ result: data.choices[0].message.content });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ OpenAI API 请求失败：", errorText);
+      res.status(500).json({ result: `服务器返回错误：${errorText}` });
+      return;
+    }
+
+    const data = await response.json();
+    res.status(200).json({ result: data.choices[0].message.content });
+
+  } catch (err) {
+    console.error("❌ 请求过程发生异常：", err.message);
+    res.status(500).json({ result: `服务器异常，请稍后重试：${err.message}` });
+  }
 }
 
-// 本地测试触发（你只需运行 node api/gpt.js）
+// ✅ 本地测试触发逻辑
 if (import.meta.url === `file://${process.argv[1]}`) {
   const req = {
     body: {
@@ -50,8 +63,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   };
 
   const res = {
-    status: () => ({
+    status: (code) => ({
       json: (data) => {
+        console.log(`\n🔔 状态码：${code}`);
         console.log("🧧 AI 返回结果：\n");
         console.log(data.result);
       }
