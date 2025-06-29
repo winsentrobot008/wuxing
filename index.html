@@ -100,7 +100,7 @@
   <div id="result"></div>
 
   <script>
-    const DEMO_MODE = true; // true = 启用演示模式
+    const DEMO_MODE = false; // 改为 true 可切换为演示模式
 
     const demoResults = [
       `🧧【阳木命主 · 翠竹生辉】
@@ -149,10 +149,10 @@
       try {
         const res = await fetch('/api/gpt.js', {
           method: 'POST',
-         headers: {
-  'Content-Type': 'application/json',
-  'x-secret-key': 'my-secret-key-888' // 注意：这行是我们自己定义的密钥
-}
+          headers: {
+            'Content-Type': 'application/json',
+            'x-secret-key': 'my-secret-key-888'
+          },
           body: JSON.stringify({ name, gender, birthday, hour, city })
         });
 
