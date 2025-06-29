@@ -43,135 +43,14 @@
       white-space: pre-line;
       line-height: 1.6;
     }
-  </style>
-</head>
-<body>
-
-  <h2>🌿 五行命盘测算</h2>
-
-  <label>姓名</label>
-  <input type="text" id="name" placeholder="请输入姓名">
-
-  <label>性别</label>
-  <select id="gender">
-    <option value="">请选择</option>
-    <option value="male">男</option>
-    <option value="female">女</option>
-  </select>
-
-  <label>出生日期</label>
-  <input type="date" id="birthday">
-
-  <label>出生时辰</label>
-  <select id="hour" disabled>
-    <option value="">请选择出生时辰</option>
-    <option value="23">子时（23:00~01:00）</option>
-    <option value="1">丑时（01:00~03:00）</option>
-    <option value="3">寅时（03:00~05:00）</option>
-    <option value="5">卯时（05:00~07:00）</option>
-    <option value="7">辰时（07:00~09:00）</option>
-    <option value="9">巳时（09:00~11:00）</option>
-    <option value="11">午时（11:00~13:00）</option>
-    <option value="13">未时（13:00~15:00）</option>
-    <option value="15">申时（15:00~17:00）</option>
-    <option value="17">酉时（17:00~19:00）</option>
-    <option value="19">戌时（19:00~21:00）</option>
-    <option value="21">亥时（21:00~23:00）</option>
-  </select>
-
-  <div class="checkbox">
-    <input type="checkbox" id="unknownHour" onclick="toggleHour()"> 不知道出生时辰
-  </div>
-
-  <label>出生城市</label>
-  <input type="text" id="city" placeholder="如 北京 / 台北 / 香港 / Tokyo">
-
-  <button onclick="submitForm()">立即测算</button>
-
-  <div id="result"></div>
-
-  <script>
-    function toggleHour() {
-      document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
-    }
-
-    async function submitForm() {
-      const name = document.getElementById('name').value.trim();
-      const gender = document.getElementById('gender').value;
-      const birthday = document.getElementById('birthday').value;
-      const hour = document.getElementById('unknownHour').checked ? '未知' : document.getElementById('hour').value;
-      const city = document.getElementById('city').value.trim();
-      const resultEl = document.getElementById('result');
-
-      if (!name || !gender || !birthday || !city) {
-        resultEl.innerHTML = '<p style="color:red;">请填写完整的出生信息</p>';
-        return;
-      }
-
-      resultEl.innerHTML = '🧮 正在测算，请稍候...';
-
-      try {
-        const res = await fetch('/api/gpt.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, gender, birthday, hour, city })
-        });
-
-        const data = await res.json();
-        resultEl.innerHTML = `<h3>🔮 AI 返回的命盘分析</h3><p>${data.result.replace(/\n/g, '<br>')}</p>`;
-      } catch (error) {
-        resultEl.innerHTML = '<p style="color:red;">❌ 请求失败，请稍后再试</p>';
-        console.error(error);
-      }
-    }
-  </script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-  <meta charset="UTF-8" />
-  <title>五行命盘测算</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #f2f2f2;
-      padding: 2em;
-      max-width: 500px;
-      margin: auto;
-    }
-    label {
-      display: block;
-      margin-top: 1em;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.6em;
-      margin-top: 0.3em;
-      font-size: 1em;
-    }
-    .checkbox {
-      margin-top: 0.6em;
-    }
-    button {
-      margin-top: 2em;
-      padding: 0.8em;
-      width: 100%;
-      font-size: 1.1em;
-      background: #4CAF50;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-    }
-    #result {
-      margin-top: 2em;
-      padding: 1em;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 0 6px rgba(0,0,0,0.1);
-      white-space: pre-line;
-      line-height: 1.6;
+    .demo-banner {
+      background: #fffbe6;
+      color: #d48806;
+      padding: 10px 14px;
+      border-left: 5px solid #faad14;
+      margin-bottom: 1em;
+      border-radius: 4px;
+      font-weight: 500;
     }
   </style>
 </head>
@@ -221,6 +100,25 @@
   <div id="result"></div>
 
   <script>
+    const DEMO_MODE = true; // true = 启用演示模式
+
+    const demoResults = [
+      `🧧【阳木命主 · 翠竹生辉】
+你属阳木，性格刚正、有担当。宜亲近水木之地，调和心性。
+幸运颜色：碧绿、湖蓝。
+诗曰：「竹影清风心自静，幽人雅志韵长存。」`,
+
+      `🕊️【阴水之灵 · 月照寒潭】
+命主属阴水，聪慧敏感，思维深远。适合夜间创作与静心养生。
+幸运颜色：银灰、深蓝。
+诗曰：「寒潭月影心如镜，水中藏梦胜千言。」`,
+
+      `🔥【丙火之耀 · 赤焰流光】
+五行属丙火，命如朝阳，热情奔放、敢作敢为。适合传播型职业。
+幸运颜色：赤红、橙金。
+诗曰：「火来炼志光千丈，一念生莲照万家。」`
+    ];
+
     function toggleHour() {
       document.getElementById('hour').disabled = document.getElementById('unknownHour').checked;
     }
@@ -239,6 +137,14 @@
       }
 
       resultEl.innerHTML = '🧮 正在测算，请稍候...';
+
+      if (DEMO_MODE) {
+        setTimeout(() => {
+          const randomResult = demoResults[Math.floor(Math.random() * demoResults.length)];
+          resultEl.innerHTML = `<div class="demo-banner">⚠ 当前为【演示模式】，GPT 正在闭关修炼中 ✨</div><h3>🔮 模拟命盘分析</h3><p>${randomResult.replace(/\n/g, '<br>')}</p>`;
+        }, 1000);
+        return;
+      }
 
       try {
         const res = await fetch('/api/gpt.js', {
