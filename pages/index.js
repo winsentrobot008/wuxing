@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Script from 'next/script'
 
-function WuxingChart({ data }) {
+function WuxingPieChart({ data }) {
   const chartRef = useRef(null)
   const chartInstance = useRef(null)
 
@@ -37,13 +37,22 @@ function WuxingChart({ data }) {
       },
       options: {
         responsive: true,
+        maintainAspectRatio: true,
         plugins: {
           legend: {
             position: 'right',
+            labels: {
+              font: {
+                size: 12
+              }
+            }
           },
           title: {
             display: true,
-            text: '五行分布'
+            text: '五行分布',
+            font: {
+              size: 14
+            }
           }
         }
       }
@@ -56,7 +65,78 @@ function WuxingChart({ data }) {
     }
   }, [data])
 
-  return <canvas ref={chartRef} />
+  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
+}
+
+function WuxingRadarChart({ data }) {
+  const chartRef = useRef(null)
+  const chartInstance = useRef(null)
+
+  useEffect(() => {
+    if (!data || !window.Chart) return
+
+    if (chartInstance.current) {
+      chartInstance.current.destroy()
+    }
+
+    const ctx = chartRef.current.getContext('2d')
+    chartInstance.current = new window.Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['木', '火', '土', '金', '水'],
+        datasets: [{
+          label: '五行强度',
+          data: [
+            data.wood,
+            data.fire,
+            data.earth,
+            data.metal,
+            data.water
+          ],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          r: {
+            beginAtZero: true,
+            min: 0,
+            max: Math.max(...Object.values(data)) + 1,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: '五行强度分布',
+            font: {
+              size: 14
+            }
+          }
+        }
+      }
+    })
+
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy()
+      }
+    }
+  }, [data])
+
+  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
 }
 
 export default function Home() {
@@ -218,30 +298,33 @@ export default function Home() {
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">五行分布</h3>
               <div className="grid grid-cols-2 gap-6">
-                <div className="aspect-square">
-                  <WuxingChart data={result.wuxingCounts} />
+                <div className="h-[200px] flex items-center justify-center">
+                  <WuxingPieChart data={result.wuxingCounts} />
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-[#4CAF50] mr-2"></div>
-                    <div>木：{result.wuxingCounts.wood} (代表生长、向上)</div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-[#F44336] mr-2"></div>
-                    <div>火：{result.wuxingCounts.fire} (代表温暖、光明)</div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-[#795548] mr-2"></div>
-                    <div>土：{result.wuxingCounts.earth} (代表稳重、包容)</div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-[#9E9E9E] mr-2"></div>
-                    <div>金：{result.wuxingCounts.metal} (代表坚强、果断)</div>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-[#2196F3] mr-2"></div>
-                    <div>水：{result.wuxingCounts.water} (代表智慧、灵活)</div>
-                  </div>
+                <div className="h-[200px] flex items-center justify-center">
+                  <WuxingRadarChart data={result.wuxingCounts} />
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-5 gap-2">
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
+                  <div>木: {result.wuxingCounts.wood}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#F44336] mx-auto mb-1"></div>
+                  <div>火: {result.wuxingCounts.fire}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
+                  <div>土: {result.wuxingCounts.earth}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
+                  <div>金: {result.wuxingCounts.metal}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
+                  <div>水: {result.wuxingCounts.water}</div>
                 </div>
               </div>
             </div>
