@@ -43,7 +43,7 @@ function WuxingPieChart({ data }) {
             position: 'right',
             labels: {
               font: {
-                size: 12
+                size: 11
               }
             }
           },
@@ -51,7 +51,7 @@ function WuxingPieChart({ data }) {
             display: true,
             text: '五行分布',
             font: {
-              size: 14
+              size: 13
             }
           }
         }
@@ -65,7 +65,7 @@ function WuxingPieChart({ data }) {
     }
   }, [data])
 
-  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
+  return <canvas ref={chartRef} style={{ maxHeight: '180px' }} />
 }
 
 function WuxingRadarChart({ data }) {
@@ -122,7 +122,7 @@ function WuxingRadarChart({ data }) {
             display: true,
             text: '五行强度分布',
             font: {
-              size: 14
+              size: 13
             }
           }
         }
@@ -136,7 +136,7 @@ function WuxingRadarChart({ data }) {
     }
   }, [data])
 
-  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
+  return <canvas ref={chartRef} style={{ maxHeight: '180px' }} />
 }
 
 export default function Home() {
@@ -208,66 +208,66 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8">八字五行分析系统</h1>
+      <main className="container mx-auto px-3 py-4">
+        <h1 className="text-2xl font-bold text-center mb-4">八字五行分析系统</h1>
 
         <form onSubmit={handleCalculate} className="max-w-md mx-auto">
-          <div className="mb-4">
-            <label className="block mb-2">姓名</label>
+          <div className="mb-3">
+            <label className="block mb-1">姓名</label>
             <input
               type="text"
               name="userName"
-              className="w-full p-2 border rounded"
+              className="w-full p-1.5 border rounded"
               placeholder="请输入姓名（选填）"
             />
           </div>
           
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="inline-flex items-center">
               <input
                 type="checkbox"
                 checked={isLunar}
                 onChange={(e) => setIsLunar(e.target.checked)}
-                className="mr-2"
+                className="mr-1"
               />
               <span>使用农历日期</span>
             </label>
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-2">{isLunar ? '农历出生日期' : '公历出生日期'}</label>
+          <div className="mb-3">
+            <label className="block mb-1">{isLunar ? '农历出生日期' : '公历出生日期'}</label>
             <input
               type="date"
               name="birthday"
               required
-              className="w-full p-2 border rounded"
+              className="w-full p-1.5 border rounded"
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-2">出生时间</label>
+          <div className="mb-3">
+            <label className="block mb-1">出生时间</label>
             <input
               type="time"
               name="birthtime"
-              className="w-full p-2 border rounded"
+              className="w-full p-1.5 border rounded"
               disabled={unknownTime}
             />
-            <div className="mt-2">
+            <div className="mt-1">
               <label className="inline-flex items-center">
                 <input
                   type="checkbox"
                   checked={unknownTime}
                   onChange={(e) => setUnknownTime(e.target.checked)}
-                  className="mr-2"
+                  className="mr-1"
                 />
                 <span>不知道出生时间</span>
               </label>
             </div>
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-2">性别</label>
-            <select name="gender" required className="w-full p-2 border rounded">
+          <div className="mb-3">
+            <label className="block mb-1">性别</label>
+            <select name="gender" required className="w-full p-1.5 border rounded">
               <option value="">请选择</option>
               <option value="male">男</option>
               <option value="female">女</option>
@@ -277,107 +277,106 @@ export default function Home() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+            className="w-full bg-blue-500 text-white p-1.5 rounded hover:bg-blue-600 disabled:bg-gray-400"
           >
             {loading ? '计算中...' : '开始分析'}
           </button>
         </form>
 
         {result && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">分析结果</h2>
+          <div className="mt-4">
+            <h2 className="text-xl font-bold mb-3">分析结果</h2>
             
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">基本信息</h3>
+            <div className="bg-white rounded-lg shadow p-4 mb-3">
+              <h3 className="text-lg font-semibold mb-2">基本信息</h3>
               
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-2 gap-3 mb-2">
                 <div>
-                  <div className="text-gray-600 mb-1">公历日期</div>
+                  <div className="text-gray-600 text-sm">公历日期</div>
                   <div className="font-medium">{`${result.solar.year}年${result.solar.month}月${result.solar.day}日${result.solar.hour !== null ? ` ${result.solar.hour}时` : ''}`}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600 mb-1">农历日期</div>
+                  <div className="text-gray-600 text-sm">农历日期</div>
                   <div className="font-medium">{`${result.lunar.lunarYear}年${result.lunar.lunarMonthName}月${result.lunar.lunarDayName}`}</div>
                 </div>
               </div>
               
-              <div>
-                <div className="text-gray-600 mb-1">生肖</div>
-                <div className="font-medium">{result.lunar.zodiac}</div>
-              </div>
-              
-              <div className="mt-4">
-                <div className="text-gray-600 mb-1">节气</div>
-                <div className="grid grid-cols-2 gap-4">
+              <div className="flex justify-between">
+                <div>
+                  <div className="text-gray-600 text-sm">生肖</div>
+                  <div className="font-medium">{result.lunar.zodiac}</div>
+                </div>
+                
+                <div>
+                  <div className="text-gray-600 text-sm">节气</div>
                   <div>
-                    <span className="font-medium">上一节气：</span>{result.jieqi.prev.name}（{result.jieqi.prev.solar}）
-                  </div>
-                  <div>
-                    <span className="font-medium">下一节气：</span>{result.jieqi.next.name}（{result.jieqi.next.solar}）
+                    <span className="text-sm">{result.jieqi.prev.name}</span>
+                    <span className="mx-2 text-gray-400">→</span>
+                    <span className="text-sm">{result.jieqi.next.name}</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">八字</h3>
-              <div className="grid grid-cols-4 gap-4 text-center">
+            <div className="bg-white rounded-lg shadow p-4 mb-3">
+              <h3 className="text-lg font-semibold mb-2">八字</h3>
+              <div className="grid grid-cols-4 gap-2 text-center">
                 <div>
-                  <div className="text-gray-600">年柱</div>
-                  <div className="text-2xl font-bold">{result.eightChar.year}</div>
+                  <div className="text-gray-600 text-xs">年柱</div>
+                  <div className="text-xl font-bold">{result.eightChar.year}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">月柱</div>
-                  <div className="text-2xl font-bold">{result.eightChar.month}</div>
+                  <div className="text-gray-600 text-xs">月柱</div>
+                  <div className="text-xl font-bold">{result.eightChar.month}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">日柱</div>
-                  <div className="text-2xl font-bold">{result.eightChar.day}</div>
+                  <div className="text-gray-600 text-xs">日柱</div>
+                  <div className="text-xl font-bold">{result.eightChar.day}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">时柱</div>
-                  <div className="text-2xl font-bold">{result.eightChar.time}</div>
+                  <div className="text-gray-600 text-xs">时柱</div>
+                  <div className="text-xl font-bold">{result.eightChar.time}</div>
                 </div>
               </div>
               
-              <div className="mt-6">
-                <h4 className="font-medium mb-2">纳音五行</h4>
-                <div className="grid grid-cols-4 gap-4">
+              <div className="mt-3">
+                <h4 className="font-medium text-sm mb-1">纳音五行</h4>
+                <div className="grid grid-cols-4 gap-2 text-sm">
                   <div>
-                    <div className="text-gray-600">年柱</div>
-                    <div className="font-medium">{result.nayin.year}</div>
+                    <div className="text-gray-600 text-xs">年柱</div>
+                    <div>{result.nayin.year}</div>
                   </div>
                   <div>
-                    <div className="text-gray-600">月柱</div>
-                    <div className="font-medium">{result.nayin.month}</div>
+                    <div className="text-gray-600 text-xs">月柱</div>
+                    <div>{result.nayin.month}</div>
                   </div>
                   <div>
-                    <div className="text-gray-600">日柱</div>
-                    <div className="font-medium">{result.nayin.day}</div>
+                    <div className="text-gray-600 text-xs">日柱</div>
+                    <div>{result.nayin.day}</div>
                   </div>
                   <div>
-                    <div className="text-gray-600">时柱</div>
-                    <div className="font-medium">{result.nayin.time}</div>
+                    <div className="text-gray-600 text-xs">时柱</div>
+                    <div>{result.nayin.time}</div>
                   </div>
                 </div>
               </div>
               
               {result.tenGods && result.tenGods.year && (
-                <div className="mt-6">
-                  <h4 className="font-medium mb-2">十神</h4>
-                  <div className="grid grid-cols-3 gap-4">
+                <div className="mt-3">
+                  <h4 className="font-medium text-sm mb-1">十神</h4>
+                  <div className="grid grid-cols-3 gap-2 text-sm">
                     <div>
-                      <div className="text-gray-600">年干</div>
-                      <div className="font-medium">{result.tenGods.year}</div>
+                      <div className="text-gray-600 text-xs">年干</div>
+                      <div>{result.tenGods.year}</div>
                     </div>
                     <div>
-                      <div className="text-gray-600">月干</div>
-                      <div className="font-medium">{result.tenGods.month}</div>
+                      <div className="text-gray-600 text-xs">月干</div>
+                      <div>{result.tenGods.month}</div>
                     </div>
                     {result.tenGods.time && (
                       <div>
-                        <div className="text-gray-600">时干</div>
-                        <div className="font-medium">{result.tenGods.time}</div>
+                        <div className="text-gray-600 text-xs">时干</div>
+                        <div>{result.tenGods.time}</div>
                       </div>
                     )}
                   </div>
@@ -385,54 +384,54 @@ export default function Home() {
               )}
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">五行分布</h3>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="h-[200px] flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow p-4 mb-3">
+              <h3 className="text-lg font-semibold mb-2">五行分布</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="h-[180px] flex items-center justify-center">
                   <WuxingPieChart data={result.wuxingCounts} />
                 </div>
-                <div className="h-[200px] flex items-center justify-center">
+                <div className="h-[180px] flex items-center justify-center">
                   <WuxingRadarChart data={result.wuxingCounts} />
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-5 gap-2">
+              <div className="mt-2 grid grid-cols-5 gap-1 text-sm">
                 <div className="text-center">
-                  <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
+                  <div className="w-3 h-3 bg-[#4CAF50] mx-auto mb-0.5"></div>
                   <div>木: {result.wuxingCounts.wood}</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-4 h-4 bg-[#F44336] mx-auto mb-1"></div>
+                  <div className="w-3 h-3 bg-[#F44336] mx-auto mb-0.5"></div>
                   <div>火: {result.wuxingCounts.fire}</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
+                  <div className="w-3 h-3 bg-[#795548] mx-auto mb-0.5"></div>
                   <div>土: {result.wuxingCounts.earth}</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
+                  <div className="w-3 h-3 bg-[#9E9E9E] mx-auto mb-0.5"></div>
                   <div>金: {result.wuxingCounts.metal}</div>
                 </div>
                 <div className="text-center">
-                  <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
+                  <div className="w-3 h-3 bg-[#2196F3] mx-auto mb-0.5"></div>
                   <div>水: {result.wuxingCounts.water}</div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">五行分析</h3>
-              <div className="space-y-4">
-                <div className="prose max-w-none">
-                  <h4 className="text-lg font-medium mb-2">五行特征</h4>
+            <div className="bg-white rounded-lg shadow p-4 mb-3">
+              <h3 className="text-lg font-semibold mb-2">五行分析</h3>
+              <div className="space-y-3">
+                <div className="prose max-w-none text-sm">
+                  <h4 className="text-base font-medium mb-1">五行特征</h4>
                   <p className="whitespace-pre-line">{result.analysis}</p>
                 </div>
                 
-                <div className="mt-4">
-                  <h4 className="text-lg font-medium mb-2">五行关系</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-4 rounded">
-                      <h5 className="font-medium mb-2">生克关系</h5>
-                      <ul className="list-disc list-inside space-y-1">
+                <div className="mt-3">
+                  <h4 className="text-base font-medium mb-1">五行关系</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div className="bg-gray-50 p-2 rounded">
+                      <h5 className="font-medium mb-1 text-sm">生克关系</h5>
+                      <ul className="list-disc list-inside space-y-0 text-xs">
                         <li>木生火：生长之气助长温暖光明</li>
                         <li>火生土：温暖之气促进包容稳重</li>
                         <li>土生金：包容之气增强坚毅果断</li>
@@ -445,9 +444,9 @@ export default function Home() {
                         <li>水克火：智慧灵动制约温暖光明</li>
                       </ul>
                     </div>
-                    <div className="bg-gray-50 p-4 rounded">
-                      <h5 className="font-medium mb-2">五行平衡建议</h5>
-                      <ul className="list-disc list-inside space-y-1">
+                    <div className="bg-gray-50 p-2 rounded">
+                      <h5 className="font-medium mb-1 text-sm">五行平衡建议</h5>
+                      <ul className="list-disc list-inside space-y-0 text-xs">
                         {result.wuxingCounts.wood > 0 && (
                           <li>木：宜亲近植物，多去户外活动</li>
                         )}
