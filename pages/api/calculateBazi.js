@@ -17,7 +17,10 @@ export default async function handler(req, res) {
     }
 
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: '只支持POST请求' })
+        return res.status(405).json({ 
+            success: false,
+            error: '只支持POST请求' 
+        })
     }
 
     try {
