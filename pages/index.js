@@ -143,6 +143,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [unknownTime, setUnknownTime] = useState(false)
+  const [isLunar, setIsLunar] = useState(false)
 
   async function handleCalculate(event) {
     event.preventDefault()
@@ -168,7 +169,8 @@ export default function Home() {
       hour,
       noHour: unknownTime,
       gender: formData.get('gender'),
-      userName: formData.get('userName')
+      userName: formData.get('userName'),
+      isLunar: isLunar
     }
 
     try {
@@ -219,9 +221,21 @@ export default function Home() {
               placeholder="请输入姓名（选填）"
             />
           </div>
+          
+          <div className="mb-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                checked={isLunar}
+                onChange={(e) => setIsLunar(e.target.checked)}
+                className="mr-2"
+              />
+              <span>使用农历日期</span>
+            </label>
+          </div>
 
           <div className="mb-4">
-            <label className="block mb-2">出生日期</label>
+            <label className="block mb-2">{isLunar ? '农历出生日期' : '公历出生日期'}</label>
             <input
               type="date"
               name="birthday"
@@ -274,6 +288,38 @@ export default function Home() {
             <h2 className="text-2xl font-bold mb-4">分析结果</h2>
             
             <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">基本信息</h3>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <div className="text-gray-600 mb-1">公历日期</div>
+                  <div className="font-medium">{`${result.solar.year}年${result.solar.month}月${result.solar.day}日${result.solar.hour !== null ? ` ${result.solar.hour}时` : ''}`}</div>
+                </div>
+                <div>
+                  <div className="text-gray-600 mb-1">农历日期</div>
+                  <div className="font-medium">{`${result.lunar.lunarYear}年${result.lunar.lunarMonthName}月${result.lunar.lunarDayName}`}</div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-gray-600 mb-1">生肖</div>
+                <div className="font-medium">{result.lunar.zodiac}</div>
+              </div>
+              
+              <div className="mt-4">
+                <div className="text-gray-600 mb-1">节气</div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium">上一节气：</span>{result.jieqi.prev.name}（{result.jieqi.prev.solar}）
+                  </div>
+                  <div>
+                    <span className="font-medium">下一节气：</span>{result.jieqi.next.name}（{result.jieqi.next.solar}）
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">八字</h3>
               <div className="grid grid-cols-4 gap-4 text-center">
                 <div>
@@ -293,6 +339,50 @@ export default function Home() {
                   <div className="text-2xl font-bold">{result.eightChar.time}</div>
                 </div>
               </div>
+              
+              <div className="mt-6">
+                <h4 className="font-medium mb-2">纳音五行</h4>
+                <div className="grid grid-cols-4 gap-4">
+                  <div>
+                    <div className="text-gray-600">年柱</div>
+                    <div className="font-medium">{result.nayin.year}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-600">月柱</div>
+                    <div className="font-medium">{result.nayin.month}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-600">日柱</div>
+                    <div className="font-medium">{result.nayin.day}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-600">时柱</div>
+                    <div className="font-medium">{result.nayin.time}</div>
+                  </div>
+                </div>
+              </div>
+              
+              {result.tenGods && result.tenGods.year && (
+                <div className="mt-6">
+                  <h4 className="font-medium mb-2">十神</h4>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <div className="text-gray-600">年干</div>
+                      <div className="font-medium">{result.tenGods.year}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-600">月干</div>
+                      <div className="font-medium">{result.tenGods.month}</div>
+                    </div>
+                    {result.tenGods.time && (
+                      <div>
+                        <div className="text-gray-600">时干</div>
+                        <div className="font-medium">{result.tenGods.time}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="bg-white rounded-lg shadow p-6 mb-6">
@@ -348,6 +438,11 @@ export default function Home() {
                         <li>土生金：包容之气增强坚毅果断</li>
                         <li>金生水：果断之气化为智慧灵动</li>
                         <li>水生木：智慧之气助益生长向上</li>
+                        <li>木克土：生长力量制约包容稳重</li>
+                        <li>火克金：温暖光明制约坚毅果断</li>
+                        <li>土克水：包容稳重制约智慧灵动</li>
+                        <li>金克木：坚毅果断制约生长向上</li>
+                        <li>水克火：智慧灵动制约温暖光明</li>
                       </ul>
                     </div>
                     <div className="bg-gray-50 p-4 rounded">
