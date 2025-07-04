@@ -15,3 +15,20 @@ button {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
+
+/* 调整输入框样式 */
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select {
+  height: 36px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+textarea {
+  height: 80px;
+  resize: vertical;
+  min-height: 36px;
+  max-height: 150px;
+}

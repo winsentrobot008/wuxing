@@ -45,6 +45,29 @@ const fiveElementFoods = {
     water: ['seafood', 'melons']
 };
 
+// 常用汉字五行属性表（受保护的核心数据）
+const characterWuxingMap = {
+    // 木属性
+    '木': 'wood', '林': 'wood', '森': 'wood', '李': 'wood', '杨': 'wood',
+    '柳': 'wood', '松': 'wood', '梅': 'wood', '桂': 'wood', '楠': 'wood',
+    
+    // 火属性
+    '火': 'fire', '炎': 'fire', '焱': 'fire', '煜': 'fire', '炫': 'fire',
+    '晶': 'fire', '明': 'fire', '晓': 'fire', '旭': 'fire', '炅': 'fire',
+    
+    // 土属性
+    '土': 'earth', '垚': 'earth', '坤': 'earth', '城': 'earth', '培': 'earth',
+    '境': 'earth', '均': 'earth', '坚': 'earth', '固': 'earth', '基': 'earth',
+    
+    // 金属性
+    '金': 'metal', '钧': 'metal', '铭': 'metal', '锋': 'metal', '钊': 'metal',
+    '铁': 'metal', '钢': 'metal', '锐': 'metal', '铮': 'metal', '钰': 'metal',
+    
+    // 水属性
+    '水': 'water', '江': 'water', '河': 'water', '涛': 'water', '润': 'water',
+    '泽': 'water', '洋': 'water', '海': 'water', '渊': 'water', '潮': 'water'
+};
+
 // 辅助函数：根据五行数量计算五行平衡度
 function calculateBalanceDegree(wuxingCounts) {
     const totalCount = Object.values(wuxingCounts).reduce((sum, count) => sum + count, 0);
@@ -112,6 +135,90 @@ function simpleFortunePrediction(wuxingCounts) {
     return fortune;
 }
 
+// 辅助函数：分析姓名五行
+function analyzeNameWuxing(name) {
+    if (!name) return null;
+    
+    const nameWuxing = [];
+    let wuxingCounts = { metal: 0, wood: 0, water: 0, fire: 0, earth: 0 };
+    
+    // 分析每个字的五行
+    for (const char of name) {
+        const element = characterWuxingMap[char];
+        if (element) {
+            nameWuxing.push({ char, element });
+            wuxingCounts[element]++;
+        }
+    }
+    
+    // 计算姓名五行强度
+    const total = Object.values(wuxingCounts).reduce((a, b) => a + b, 0);
+    const strength = {};
+    for (const element in wuxingCounts) {
+        strength[element] = total > 0 ? (wuxingCounts[element] / total) : 0;
+    }
+    
+    return {
+        nameWuxing,        // 每个字的五行属性
+        wuxingCounts,      // 五行数量统计
+        strength           // 五行强度比例
+    };
+}
+
+// 辅助函数：分析姓名与八字五行的关系
+function analyzeNameBaziCompatibility(nameAnalysis, baziWuxing) {
+    if (!nameAnalysis || !baziWuxing) return null;
+    
+    const compatibility = {
+        reinforcing: [],   // 相生关系
+        conflicting: [],   // 相克关系
+        balanced: [],      // 平衡关系
+        score: 0          // 综合评分
+    };
+    
+    // 分析每个字与八字五行的关系
+    for (const charInfo of nameAnalysis.nameWuxing) {
+        const charElement = charInfo.element;
+        
+        // 检查与八字主气的关系
+        for (const baziElement in baziWuxing) {
+            if (baziWuxing[baziElement] > 0) {
+                // 相生关系
+                if (fiveElementGenerating[charElement] === baziElement ||
+                    fiveElementGenerating[baziElement] === charElement) {
+                    compatibility.reinforcing.push({
+                        char: charInfo.char,
+                        relation: '相生',
+                        with: baziElement
+                    });
+                    compatibility.score += 1;
+                }
+                // 相克关系
+                else if (fiveElementRestraining[charElement] === baziElement ||
+                        fiveElementRestraining[baziElement] === charElement) {
+                    compatibility.conflicting.push({
+                        char: charInfo.char,
+                        relation: '相克',
+                        with: baziElement
+                    });
+                    compatibility.score -= 1;
+                }
+                // 同类
+                else if (charElement === baziElement) {
+                    compatibility.balanced.push({
+                        char: charInfo.char,
+                        relation: '同类',
+                        with: baziElement
+                    });
+                    compatibility.score += 0.5;
+                }
+            }
+        }
+    }
+    
+    return compatibility;
+}
+
 // 导出函数
 export {
     calculateBalanceDegree,
@@ -119,5 +226,8 @@ export {
     calculateGeneratingRelationship,
     calculateRestrainingRelationship,
     giveDetailedAdjustmentAdvice,
-    simpleFortunePrediction
+    simpleFortunePrediction,
+    analyzeNameWuxing,
+    analyzeNameBaziCompatibility,
+    characterWuxingMap
 };

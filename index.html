@@ -2,186 +2,136 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>五行命盘测算</title>
+  <title>八字五行分析系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" href="images/icon-192x192.png">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #f2f2f2;
-      padding: 2em;
-      max-width: 500px;
-      margin: auto;
+    :root {
+      --wood-color: #4CAF50;
+      --fire-color: #FF5722;
+      --earth-color: #795548;
+      --metal-color: #9E9E9E;
+      --water-color: #2196F3;
     }
-    label { display: block; margin-top: 1em; }
-    input, select {
-      width: 100%; padding: 0.6em; margin-top: 0.3em; font-size: 1em;
+    .theme-wood { background-color: var(--wood-color); color: white; }
+    .theme-fire { background-color: var(--fire-color); color: white; }
+    .theme-earth { background-color: var(--earth-color); color: white; }
+    .theme-metal { background-color: var(--metal-color); color: white; }
+    .theme-water { background-color: var(--water-color); color: white; }
+    
+    .element-card {
+      transition: all 0.3s ease;
+      transform-origin: center;
     }
-    .checkbox { margin-top: 0.6em; }
-    button {
-      margin-top: 2em; padding: 0.8em; width: 100%;
-      font-size: 1.1em; background: #4CAF50; color: #fff;
-      border: none; border-radius: 6px;
+    .element-card:hover {
+      transform: scale(1.05);
     }
-    #result {
-      margin-top: 2em; padding: 1em; background: #fff;
-      border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.1);
-      white-space: pre-line; line-height: 1.6;
+    
+    .loading {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
     }
-    .demo-banner {
-      background: #fffbe6; color: #d48806;
-      padding: 10px 14px; border-left: 5px solid #faad14;
-      margin-bottom: 1em; border-radius: 4px; font-weight: 500;
+    .loading:after {
+      content: " ";
+      display: block;
+      border-radius: 50%;
+      width: 0;
+      height: 0;
+      margin: 8px;
+      box-sizing: border-box;
+      border: 32px solid #ddd;
+      border-color: #ddd transparent #ddd transparent;
+      animation: loading 1.2s infinite;
+    }
+    @keyframes loading {
+      0% { transform: rotate(0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19); }
+      50% { transform: rotate(900deg); animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+      100% { transform: rotate(1800deg); }
     }
   </style>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-800 mb-2">八字五行分析系统</h1>
+      <p class="text-gray-600">探索你的命理五行，找寻人生方向</p>
+    </div>
 
-  <h2>🌿 五行命盘测算</h2>
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+            <input type="text" id="userName" placeholder="请输入姓名（选填）" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+          </div>
 
-  <label>姓名</label>
-  <input type="text" id="name" placeholder="请输入姓名">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">出生日期</label>
+            <input type="date" id="birthday" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+          </div>
+          
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-sm font-medium text-gray-700">出生时间</label>
+              <div class="flex items-center">
+                <input type="checkbox" id="unknownTime" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
+                <label for="unknownTime" class="ml-2 text-sm text-gray-600">不清楚出生时间</label>
+              </div>
+            </div>
+            <input type="time" id="birthtime" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+          </div>
 
-  <label>性别</label>
-  <select id="gender">
-    <option value="">请选择</option>
-    <option value="male">男</option>
-    <option value="female">女</option>
-  </select>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">性别</label>
+            <select id="gender" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+              <option value="male">男</option>
+              <option value="female">女</option>
+            </select>
+          </div>
 
-  <label>出生日期</label>
-  <input type="date" id="birthday">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">历法选择</label>
+            <select id="calendar" class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+              <option value="solar">阳历（公历）</option>
+              <option value="lunar">阴历（农历）</option>
+            </select>
+          </div>
+        </div>
 
-  <label>出生时辰</label>
-  <select id="hour" disabled>
-    <option value="">请选择出生时辰</option>
-    <option value="23">子时（23:00~01:00）</option>
-    <option value="1">丑时（01:00~03:00）</option>
-    <option value="3">寅时（03:00~05:00）</option>
-    <option value="5">卯时（05:00~07:00）</option>
-    <option value="7">辰时（07:00~09:00）</option>
-    <option value="9">巳时（09:00~11:00）</option>
-    <option value="11">午时（11:00~13:00）</option>
-    <option value="13">未时（13:00~15:00）</option>
-    <option value="15">申时（15:00~17:00）</option>
-    <option value="17">酉时（17:00~19:00）</option>
-    <option value="19">戌时（19:00~21:00）</option>
-    <option value="21">亥时（21:00~23:00）</option>
-  </select>
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-4">五行基础知识</h3>
+          <div class="space-y-2 text-sm">
+            <p>🌳 <span class="font-medium">木</span>：代表生长、向上</p>
+            <p>🔥 <span class="font-medium">火</span>：代表温暖、光明</p>
+            <p>🗺️ <span class="font-medium">土</span>：代表稳重、包容</p>
+            <p>⚔️ <span class="font-medium">金</span>：代表坚强、果断</p>
+            <p>💧 <span class="font-medium">水</span>：代表智慧、灵活</p>
+          </div>
+        </div>
+      </div>
 
-  <div class="checkbox">
-    <input type="checkbox" id="unknownHour" onclick="toggleHour()"> 不知道出生时辰
+      <div class="mt-6 text-center">
+        <button id="calculate-btn" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200">
+          开始分析
+        </button>
+      </div>
+    </div>
+
+    <div id="loading" class="hidden">
+      <div class="loading"></div>
+      <p class="text-center mt-4 text-gray-600">正在进行命理分析...</p>
+    </div>
+
+    <div id="result" class="hidden space-y-6">
+      <!-- 结果将通过JavaScript动态插入 -->
+    </div>
   </div>
 
-  <label>出生城市</label>
-  <input type="text" id="city" placeholder="如 北京 / 台北 / 香港 / Tokyo">
-
-  <button id="submit-btn">立即测算</button>
-
-  <div id="result"></div>
-
-  <script>
-    // —— 1. 根据当前域名动态选后端地址 —— 
-    const hostname = window.location.hostname;
-    const apiUrl = hostname.endsWith('netlify.app')
-      ? 'https://five-elements-eta.vercel.app/api/gemini.js'
-      : '/api/gemini.js';
-
-    // —— 2. DEMO 模式可回落 —— 
-    let DEMO_MODE = false;
-
-    // —— 3. 演示数据 —— 
-    const demoResults = [
-      `🧧【阳木命主 · 翠竹生辉】
-你属阳木，性格刚正、有担当。宜亲近水木之地，调和心性。
-幸运颜色：碧绿、湖蓝。
-诗曰：「竹影清风心自静，幽人雅志韵长存。」`,
-      `🕊️【阴水之灵 · 月照寒潭】
-命主属阴水，聪慧敏感，思维深远。适合夜间创作与静心养生。
-幸运颜色：银灰、深蓝。
-诗曰：「寒潭月影心如镜，水中藏梦胜千言。」`,
-      `🔥【丙火之耀 · 赤焰流光】
-五行属丙火，命如朝阳，热情奔放、敢作敢为。适合传播型职业。
-幸运颜色：赤红、橙金。
-诗曰：「火来炼志光千丈，一念生莲照万家。」`
-    ];
-
-    function toggleHour() {
-      document.getElementById('hour').disabled =
-        document.getElementById('unknownHour').checked;
-    }
-
-    document.getElementById('submit-btn').addEventListener('click', async () => {
-      const name = document.getElementById('name').value.trim();
-      const gender = document.getElementById('gender').value;
-      const birthday = document.getElementById('birthday').value;
-      const hour = document.getElementById('unknownHour').checked
-        ? '未知'
-        : (document.getElementById('hour').value || '未知');
-      const city = document.getElementById('city').value.trim();
-      const resultEl = document.getElementById('result');
-
-      // —— 表单校验 —— 
-      if (!name || !gender || !birthday || !city) {
-        return showError('请填写完整的出生信息');
-      }
-      resultEl.innerHTML = '🧮 正在测算，请稍候...';
-
-      // —— DEMO 逻辑 —— 
-      if (DEMO_MODE) {
-        setTimeout(() => {
-          const r = demoResults[Math.floor(Math.random() * demoResults.length)];
-          resultEl.innerHTML = `
-            <div class="demo-banner">
-              ⚠ 当前为【演示模式】，GPT 正在闭关修炼中 ✨
-            </div>
-            <h3>🔮 模拟命盘分析</h3>
-            <p>${r.replace(/\n/g, '<br>')}</p>
-          `;
-        }, 800);
-        return;
-      }
-
-      // —— 请求后端 —— 
-      let res, text, data;
-      try {
-        res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, gender, birthday, hour, city })
-        });
-      } catch (e) {
-        console.error('Network fetch error:', e);
-        return showError('请求失败，请检查网络', true);
-      }
-
-      // —— 容错：非 JSON 或 HTML 响应自动切 DEMO —— 
-      try {
-        text = await res.text();
-        data = JSON.parse(text);
-      } catch (e) {
-        console.warn('非 JSON 响应，切回演示模式', e);
-        return showError('❌ 服务暂不可用，已切换演示模式', true);
-      }
-
-      if (!res.ok) {
-        return showError(`❌ 接口异常：${data.error || '未知错误'}`, true);
-      }
-
-      showResult(data.result);
-    });
-
-    function showError(msg, fallback = false) {
-      if (fallback) DEMO_MODE = true;
-      document.getElementById('result').innerHTML =
-        `<p style="color:red;">${msg}</p>`;
-    }
-
-    function showResult(html) {
-      document.getElementById('result').innerHTML = `
-        <h3>🔮 AI 返回的命盘分析</h3>
-        <p>${html.replace(/\n/g, '<br>')}</p>
-      `;
-    }
-  </script>
-
+  <script src="/script.js"></script>
 </body>
 </html>
