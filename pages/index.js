@@ -245,6 +245,52 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">五行分析</h3>
+              <div className="space-y-4">
+                <div className="prose max-w-none">
+                  <h4 className="text-lg font-medium mb-2">五行特征</h4>
+                  <p className="whitespace-pre-line">{result.analysis}</p>
+                </div>
+                
+                <div className="mt-4">
+                  <h4 className="text-lg font-medium mb-2">五行关系</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-gray-50 p-4 rounded">
+                      <h5 className="font-medium mb-2">生克关系</h5>
+                      <ul className="list-disc list-inside space-y-1">
+                        <li>木生火：生长之气助长温暖光明</li>
+                        <li>火生土：温暖之气促进包容稳重</li>
+                        <li>土生金：包容之气增强坚毅果断</li>
+                        <li>金生水：果断之气化为智慧灵动</li>
+                        <li>水生木：智慧之气助益生长向上</li>
+                      </ul>
+                    </div>
+                    <div className="bg-gray-50 p-4 rounded">
+                      <h5 className="font-medium mb-2">五行平衡建议</h5>
+                      <ul className="list-disc list-inside space-y-1">
+                        {result.wuxingCounts.wood > 0 && (
+                          <li>木：宜亲近植物，多去户外活动</li>
+                        )}
+                        {result.wuxingCounts.fire > 0 && (
+                          <li>火：宜保持乐观，培养创造力</li>
+                        )}
+                        {result.wuxingCounts.earth > 0 && (
+                          <li>土：宜稳重踏实，注重责任心</li>
+                        )}
+                        {result.wuxingCounts.metal > 0 && (
+                          <li>金：宜坚持原则，提升执行力</li>
+                        )}
+                        {result.wuxingCounts.water > 0 && (
+                          <li>水：宜灵活变通，增进智慧学习</li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>

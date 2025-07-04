@@ -119,18 +119,94 @@ export default async function handler(req, res) {
         // 计算五行分布
         const wuxingCounts = calculateFiveElements(eightChar)
 
+        // 计算五行分析
+        let analysis = `五行分布：\n`;
+        
+        // 分析木的特征
+        if (wuxingCounts.wood > 0) {
+            analysis += `木：${wuxingCounts.wood} (代表生长、向上)\n`;
+            analysis += `木的特质体现在创造力、进取心和理想主义上。\n`;
+        }
+
+        // 分析火的特征
+        if (wuxingCounts.fire > 0) {
+            analysis += `火：${wuxingCounts.fire} (代表温暖、光明)\n`;
+            analysis += `火的特质体现在热情、表达力和领导能力上。\n`;
+        }
+
+        // 分析土的特征
+        if (wuxingCounts.earth > 0) {
+            analysis += `土：${wuxingCounts.earth} (代表稳重、包容)\n`;
+            analysis += `土的特质体现在责任心、可靠性和务实态度上。\n`;
+        }
+
+        // 分析金的特征
+        if (wuxingCounts.metal > 0) {
+            analysis += `金：${wuxingCounts.metal} (代表坚强、果断)\n`;
+            analysis += `金的特质体现在执行力、决断力和原则性上。\n`;
+        }
+
+        // 分析水的特征
+        if (wuxingCounts.water > 0) {
+            analysis += `水：${wuxingCounts.water} (代表智慧、灵活)\n`;
+            analysis += `水的特质体现在智慧、适应性和学习能力上。\n`;
+        }
+
+        // 分析五行平衡
+        const total = Object.values(wuxingCounts).reduce((a, b) => a + b, 0);
+        const average = total / 5;
+
+        analysis += `\n五行平衡分析：\n`;
+        
+        Object.entries(wuxingCounts).forEach(([element, count]) => {
+            if (count > average) {
+                analysis += `${element}偏强：`;
+                switch (element) {
+                    case 'wood':
+                        analysis += '显示较强的创造力和进取心，但需要注意控制过于理想化的倾向。\n';
+                        break;
+                    case 'fire':
+                        analysis += '表现出充沛的热情和表达欲，但需要注意控制情绪的稳定性。\n';
+                        break;
+                    case 'earth':
+                        analysis += '展现出很好的责任心和可靠性，但需要注意避免过于保守。\n';
+                        break;
+                    case 'metal':
+                        analysis += '具有较强的执行力和决断力，但需要注意增加灵活性。\n';
+                        break;
+                    case 'water':
+                        analysis += '智慧和适应能力较强，但需要注意加强行动力。\n';
+                        break;
+                }
+            } else if (count < average) {
+                analysis += `${element}偏弱：`;
+                switch (element) {
+                    case 'wood':
+                        analysis += '建议多培养创造力和进取心，增加户外活动。\n';
+                        break;
+                    case 'fire':
+                        analysis += '建议多参与社交活动，培养表达能力和热情。\n';
+                        break;
+                    case 'earth':
+                        analysis += '建议培养责任心和务实态度，稳固基础。\n';
+                        break;
+                    case 'metal':
+                        analysis += '建议加强执行力和决断力，建立原则性。\n';
+                        break;
+                    case 'water':
+                        analysis += '建议多学习新知识，提升适应能力和智慧。\n';
+                        break;
+                }
+            }
+        });
+
         // 生成分析结果
         const result = {
             success: true,
             data: {
                 eightChar,
                 wuxingCounts,
-                analysis: `五行分布：
-                    木：${wuxingCounts.wood} (代表生长、向上)
-                    火：${wuxingCounts.fire} (代表温暖、光明)
-                    土：${wuxingCounts.earth} (代表稳重、包容)
-                    金：${wuxingCounts.metal} (代表坚强、果断)
-                    水：${wuxingCounts.water} (代表智慧、灵活)`
+                analysis
             }
         }
         
