@@ -5,18 +5,33 @@ import Script from 'next/script'
 export default function Home() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
+  const [unknownTime, setUnknownTime] = useState(false)
 
   async function handleCalculate(event) {
     event.preventDefault()
     setLoading(true)
 
     const formData = new FormData(event.target)
+    const birthday = formData.get('birthday')
+    const [year, month, day] = birthday.split('-').map(Number)
+    let hour = null
+    
+    if (!unknownTime) {
+      const birthtime = formData.get('birthtime')
+      if (birthtime) {
+        const [h] = birthtime.split(':').map(Number)
+        hour = h
+      }
+    }
+
     const data = {
-      userName: formData.get('userName'),
-      birthday: formData.get('birthday'),
-      birthtime: formData.get('birthtime'),
-      unknownTime: formData.get('unknownTime') === 'on',
-      gender: formData.get('gender')
+      year,
+      month,
+      day,
+      hour,
+      noHour: unknownTime,
+      gender: formData.get('gender'),
+      userName: formData.get('userName')
     }
 
     try {
@@ -27,6 +42,10 @@ export default function Home() {
         },
         body: JSON.stringify(data)
       })
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
 
       const responseData = await res.json()
       if (!responseData.success) {
@@ -80,11 +99,16 @@ export default function Home() {
               type="time"
               name="birthtime"
               className="w-full p-2 border rounded"
-              disabled={formData?.get('unknownTime') === 'on'}
+              disabled={unknownTime}
             />
             <div className="mt-2">
               <label className="inline-flex items-center">
-                <input type="checkbox" name="unknownTime" className="mr-2" />
+                <input
+                  type="checkbox"
+                  checked={unknownTime}
+                  onChange={(e) => setUnknownTime(e.target.checked)}
+                  className="mr-2"
+                />
                 <span>不知道出生时间</span>
               </label>
             </div>
@@ -111,7 +135,9 @@ export default function Home() {
         {result && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">分析结果</h2>
-            {/* 这里添加结果展示的组件 */}
+            <pre className="bg-gray-100 p-4 rounded overflow-auto">
+              {JSON.stringify(result, null, 2)}
+            </pre>
           </div>
         )}
       </main>
