@@ -1,6 +1,63 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
 import Script from 'next/script'
+
+function WuxingChart({ data }) {
+  const chartRef = useRef(null)
+  const chartInstance = useRef(null)
+
+  useEffect(() => {
+    if (!data || !window.Chart) return
+
+    if (chartInstance.current) {
+      chartInstance.current.destroy()
+    }
+
+    const ctx = chartRef.current.getContext('2d')
+    chartInstance.current = new window.Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['木', '火', '土', '金', '水'],
+        datasets: [{
+          data: [
+            data.wood,
+            data.fire,
+            data.earth,
+            data.metal,
+            data.water
+          ],
+          backgroundColor: [
+            '#4CAF50', // 木
+            '#F44336', // 火
+            '#795548', // 土
+            '#9E9E9E', // 金
+            '#2196F3'  // 水
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+          title: {
+            display: true,
+            text: '五行分布'
+          }
+        }
+      }
+    })
+
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy()
+      }
+    }
+  }, [data])
+
+  return <canvas ref={chartRef} />
+}
 
 export default function Home() {
   const [loading, setLoading] = useState(false)
@@ -135,9 +192,59 @@ export default function Home() {
         {result && (
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4">分析结果</h2>
-            <pre className="bg-gray-100 p-4 rounded overflow-auto">
-              {JSON.stringify(result, null, 2)}
-            </pre>
+            
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">八字</h3>
+              <div className="grid grid-cols-4 gap-4 text-center">
+                <div>
+                  <div className="text-gray-600">年柱</div>
+                  <div className="text-2xl font-bold">{result.eightChar.year}</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">月柱</div>
+                  <div className="text-2xl font-bold">{result.eightChar.month}</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">日柱</div>
+                  <div className="text-2xl font-bold">{result.eightChar.day}</div>
+                </div>
+                <div>
+                  <div className="text-gray-600">时柱</div>
+                  <div className="text-2xl font-bold">{result.eightChar.time}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">五行分布</h3>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="aspect-square">
+                  <WuxingChart data={result.wuxingCounts} />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-[#4CAF50] mr-2"></div>
+                    <div>木：{result.wuxingCounts.wood} (代表生长、向上)</div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-[#F44336] mr-2"></div>
+                    <div>火：{result.wuxingCounts.fire} (代表温暖、光明)</div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-[#795548] mr-2"></div>
+                    <div>土：{result.wuxingCounts.earth} (代表稳重、包容)</div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-[#9E9E9E] mr-2"></div>
+                    <div>金：{result.wuxingCounts.metal} (代表坚强、果断)</div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-[#2196F3] mr-2"></div>
+                    <div>水：{result.wuxingCounts.water} (代表智慧、灵活)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </main>
