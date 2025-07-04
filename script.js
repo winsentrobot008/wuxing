@@ -127,8 +127,8 @@ async function calculate() {
             hour = h;
         }
 
-        // 发送请求
-        const res = await fetch('/api/calculate', {
+        // 发送请求到Vercel的API端点
+        const res = await fetch('/api/calculateBazi', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
