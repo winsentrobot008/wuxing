@@ -58,6 +58,7 @@ export default async function handler(req, res) {
                     day: eightChar.getDay(),
                     time: noHour ? '未知' : eightChar.getTime()
                 },
+                gender: gender, // 添加这一行
                 ...result
             }
         })
