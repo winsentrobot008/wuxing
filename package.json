@@ -11,6 +11,8 @@
   "dependencies": {
     "@react-three/drei": "^9.122.0",
     "@react-three/fiber": "^8.18.0",
+    "@vercel/blob": "^1.1.1",
+    "canvas": "^3.1.2",
     "chart.js": "^4.3.0",
     "cors": "^2.8.5",
     "lunar-javascript": "^1.6.12",

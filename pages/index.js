@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, Suspense } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, RadialLinearScale, PointElement, LineElement, Filler } from 'chart.js'
 import Script from 'next/script'
 import dynamic from 'next/dynamic'
+你import Link from 'next/link'
 
 // 动态导入Three.js组件，避免SSR问题
 const Canvas = dynamic(() => import('@react-three/fiber').then(mod => mod.Canvas), { ssr: false })
@@ -794,17 +797,27 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* 订购详细报告按钮 */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg shadow p-6 text-center mt-6">
+              <h3 className="text-2xl font-bold mb-4">🌟 想要更详细的分析报告？</h3>
+              <p className="mb-6 text-blue-100">获取专业的个性化五行分析报告，包含详细的运势预测、调理建议和人生指导</p>
+              <Link href="/order">
+                <a className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition duration-200 inline-block">
+                  订购详细报告 →
+                </a>
+              </Link>
+            </div>
           </div>
         )}
-      </div>
 
-      {/* 页脚 */}
-      <footer className="bg-gray-800 text-white py-8 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <p className="mb-2">© 2024 五行分析系统 - 传统智慧与现代科技的完美结合</p>
-          <p className="text-gray-400 text-sm">Chinese BaZi Five Elements Analysis - Ancient Wisdom Meets Modern Technology</p>
-        </div>
-      </footer>
-    </div>
-  )
-}
+        {/* 页脚 */}
+        <footer className="bg-gray-800 text-white py-8 mt-12">
+          <div className="container mx-auto px-4 text-center">
+            <p className="mb-2">© 2024 五行分析系统 - 传统智慧与现代科技的完美结合</p>
+            <p className="text-gray-400 text-sm">Chinese BaZi Five Elements Analysis - Ancient Wisdom Meets Modern Technology</p>
+          </div>
+        </footer>
+      </div>
+    )
+  }
