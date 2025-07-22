@@ -441,7 +441,6 @@ export default function Home() {
 
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
     </div>
-推送
     <footer className="text-center text-gray-400 text-sm py-4">
       版本号：1.0.0 &nbsp;|&nbsp; 日期：2024-06-09
     </footer>
