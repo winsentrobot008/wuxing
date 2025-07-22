@@ -11,7 +11,6 @@ export default async function handler(req, res) {
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
     )
 
-    // 处理预检请求
     if (req.method === 'OPTIONS') {
         res.status(200).end()
         return
@@ -27,20 +26,18 @@ export default async function handler(req, res) {
     try {
         const { year, month, day, hour, noHour, gender, userName, calendar } = req.body
         
-        // 使用LUNAR库进行真正的农历转换
+        // 使用LUNAR库进行农历转换
         let lunar;
         if (calendar === 'lunar') {
-            // 农历转公历
             lunar = Lunar.fromYmdHms(year, month, day, hour || 0, 0, 0)
         } else {
-            // 公历转农历
             lunar = Lunar.fromDate(new Date(year, month - 1, day, hour || 0))
         }
         
         // 获取八字
         const eightChar = lunar.getEightChar()
         
-        // 使用统一私有库进行真正的八字计算
+        // 调用统一私有库
         const result = calculateBazi(eightChar, noHour, gender, lunar, userName)
         
         res.status(200).json({
@@ -56,6 +53,10 @@ export default async function handler(req, res) {
             }
         })
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message })
+        console.error('API错误：', error)
+        res.status(500).json({ 
+            success: false, 
+            error: `计算失败：${error.message}` 
+        })
     }
 }

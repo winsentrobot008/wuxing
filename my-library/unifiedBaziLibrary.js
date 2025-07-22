@@ -328,9 +328,10 @@ function getFemaleLifeAdvice(element) {
 // ==================== 其他核心函数 ====================
 // （包含所有原有的计算函数，如平衡度计算、建议生成、姓名分析等）
 
-// 导出主要函数
+// 确保正确导出
 module.exports = {
-    calculateBazi,
-    fiveElementMap,
-    elementNameMap
+    calculateBazi
 };
+
+// 或者使用ES6导出
+export { calculateBazi };
