@@ -9,14 +9,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "chart.js": "^4.3.0",
     "cors": "^2.8.5",
     "lunar-javascript": "^1.6.12",
     "next": "^13.0.0",
     "react": "^18.0.0",
-    "three": "^0.158.0",
-    "@react-three/fiber": "^8.15.11",
-    "@react-three/drei": "^9.88.13"
+    "three": "^0.158.0"
   },
   "devDependencies": {
     "@types/node": "^20.1.0",
