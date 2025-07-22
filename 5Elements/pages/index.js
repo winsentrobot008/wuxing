@@ -203,110 +203,61 @@ export default function Home() {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Head>
-        <title>八字五行分析系统</title>
-        <meta name="description" content="基于八字理论的五行分析系统" />
+        <title>BaZi Five Elements Analysis System</title>
+        <meta name="description" content="A Five Elements analysis system based on BaZi theory" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/png" href="/images/icon-192x192.png" />
       </Head>
-
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">八字五行分析系统</h1>
-          <p className="text-gray-600">探索你的命理五行，找寻人生方向</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">BaZi Five Elements Analysis</h1>
+          <p className="text-gray-600">Explore your destiny through the Five Elements</p>
         </div>
-
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <form onSubmit={handleCalculate}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">姓名</label>
-                  <input
-                    type="text"
-                    name="userName"
-                    placeholder="请输入姓名（选填）"
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <input type="text" name="userName" placeholder="Enter your name (optional)" className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">出生日期</label>
-                  <input
-                    type="date"
-                    name="birthday"
-                    required
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                  <input type="date" name="birthday" required className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
                 </div>
-                
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">出生时间</label>
+                    <label className="block text-sm font-medium text-gray-700">Time of Birth</label>
                     <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="unknownTime"
-                        checked={unknownTime}
-                        onChange={(e) => setUnknownTime(e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                      />
-                      <label htmlFor="unknownTime" className="ml-2 text-sm text-gray-600">不清楚出生时间</label>
+                      <input type="checkbox" id="unknownTime" checked={unknownTime} onChange={(e) => setUnknownTime(e.target.checked)} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4" />
+                      <label htmlFor="unknownTime" className="ml-2 text-sm text-gray-600">Unknown</label>
                     </div>
                   </div>
-                  <input
-                    type="time"
-                    name="birthtime"
-                    disabled={unknownTime}
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
+                  <input type="time" name="birthtime" disabled={unknownTime} className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500" />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">性别</label>
-                  <select 
-                    name="gender" 
-                    required 
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="male">男</option>
-                    <option value="female">女</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">历法选择</label>
-                  <select 
-                    name="calendar" 
-                    value={calendar}
-                    onChange={(e) => setCalendar(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="solar">阳历（公历）</option>
-                    <option value="lunar">阴历（农历）</option>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                  <select name="gender" required className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
                 </div>
               </div>
-
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">五行基础知识</h3>
+                <h3 className="text-lg font-semibold mb-4">Five Elements Basics</h3>
                 <div className="space-y-2 text-sm">
-                  <p>🌳 <span className="font-medium">木</span>：代表生长、向上</p>
-                  <p>🔥 <span className="font-medium">火</span>：代表温暖、光明</p>
-                  <p>🗺️ <span className="font-medium">土</span>：代表稳重、包容</p>
-                  <p>⚔️ <span className="font-medium">金</span>：代表坚强、果断</p>
-                  <p>💧 <span className="font-medium">水</span>：代表智慧、灵活</p>
+                  <p>🌳 <span className="font-medium">Wood</span>: Growth, upward</p>
+                  <p>🔥 <span className="font-medium">Fire</span>: Warmth, brightness</p>
+                  <p>🗺️ <span className="font-medium">Earth</span>: Stability, inclusiveness</p>
+                  <p>⚔️ <span className="font-medium">Metal</span>: Strength, decisiveness</p>
+                  <p>💧 <span className="font-medium">Water</span>: Wisdom, flexibility</p>
                 </div>
               </div>
             </div>
-
             <div className="mt-6 text-center">
-              <button 
-                type="submit"
-                disabled={loading}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400"
-              >
-                {loading ? '分析中...' : '开始分析'}
+              <button type="submit" disabled={loading} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400">
+                {loading ? 'Analyzing...' : 'Start Analysis'}
               </button>
             </div>
           </form>
@@ -435,9 +386,42 @@ export default function Home() {
             </div>
           </div>
         )}
+        {result && (
+          <div className="mt-8 flex flex-col items-center">
+            <div className="bg-white rounded-lg shadow p-4 w-full max-w-xl text-sm">
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div><span className="font-medium">公历：</span>{result.solarDate}</div>
+                <div><span className="font-medium">农历：</span>{result.lunarDate}</div>
+                <div><span className="font-medium">生肖：</span>{result.zodiac}</div>
+                <div><span className="font-medium">节气：</span>{result.solarTerm}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                <div><span className="font-medium">年柱：</span>{result.eightChar?.year}</div>
+                <div><span className="font-medium">月柱：</span>{result.eightChar?.month}</div>
+                <div><span className="font-medium">日柱：</span>{result.eightChar?.day}</div>
+                <div><span className="font-medium">时柱：</span>{result.eightChar?.time || '未知'}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                <div><span className="font-medium">年纳音：</span>{result.nayin?.year}</div>
+                <div><span className="font-medium">月纳音：</span>{result.nayin?.month}</div>
+                <div><span className="font-medium">日纳音：</span>{result.nayin?.day}</div>
+                <div><span className="font-medium">时纳音：</span>{result.nayin?.time || '未知'}</div>
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                <div><span className="font-medium">年干：</span>{result.tenGods?.year}</div>
+                <div><span className="font-medium">月干：</span>{result.tenGods?.month}</div>
+                <div><span className="font-medium">日干：</span>{result.tenGods?.day}</div>
+                <div><span className="font-medium">时干：</span>{result.tenGods?.time || '未知'}</div>
+              </div>
+            </div>
+            <a href="/mall" className="mt-6">
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">前往五行能量商城</button>
+            </a>
+          </div>
+        )}
       </div>
 
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
     </div>
   )
-} 
+}
