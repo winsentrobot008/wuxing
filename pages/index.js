@@ -342,6 +342,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
 
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">五行分布</h3>
@@ -440,4 +442,4 @@ export default function Home() {
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
     </div>
   )
-} 
+}
