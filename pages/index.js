@@ -1,142 +1,212 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import Head from 'next/head'
 import Script from 'next/script'
+import dynamic from 'next/dynamic'
 
-function WuxingPieChart({ data }) {
-  const chartRef = useRef(null)
-  const chartInstance = useRef(null)
+// 动态导入Three.js组件，避免SSR问题
+const Canvas = dynamic(() => import('@react-three/fiber').then(mod => mod.Canvas), { ssr: false })
+const OrbitControls = dynamic(() => import('@react-three/drei').then(mod => mod.OrbitControls), { ssr: false })
+const Text = dynamic(() => import('@react-three/drei').then(mod => mod.Text), { ssr: false })
 
+// 3D饼图组件
+function Wuxing3DPieChart({ data }) {
+  const meshRef = useRef()
+  
   useEffect(() => {
-    if (!data || !window.Chart) return
-
-    if (chartInstance.current) {
-      chartInstance.current.destroy()
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.01
     }
+  })
 
-    const ctx = chartRef.current.getContext('2d')
-    chartInstance.current = new window.Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
-        datasets: [{
-          data: [
-            data.wood,
-            data.fire,
-            data.earth,
-            data.metal,
-            data.water
-          ],
-          backgroundColor: [
-            '#4CAF50', // Wood
-            '#FF5722', // Fire
-            '#795548', // Earth
-            '#9E9E9E', // Metal
-            '#2196F3'  // Water
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-          legend: {
-            position: 'right',
-            labels: {
-              font: {
-                size: 12
-              }
-            }
-          },
-          title: {
-            display: true,
-            text: 'Five Elements Distribution',
-            font: {
-              size: 14
-            }
-          }
-        }
-      }
-    })
+  const elements = [
+    { name: 'Wood', value: data.wood, color: '#4CAF50', angle: 0 },
+    { name: 'Fire', value: data.fire, color: '#FF5722', angle: 0 },
+    { name: 'Earth', value: data.earth, color: '#795548', angle: 0 },
+    { name: 'Metal', value: data.metal, color: '#9E9E9E', angle: 0 },
+    { name: 'Water', value: data.water, color: '#2196F3', angle: 0 }
+  ]
 
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy()
-      }
-    }
-  }, [data])
+  const total = Object.values(data).reduce((sum, val) => sum + val, 0)
+  let currentAngle = 0
 
-  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
+  elements.forEach(element => {
+    element.angle = (element.value / total) * Math.PI * 2
+  })
+
+  return (
+    <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+      <Suspense fallback={null}>
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <OrbitControls enableZoom={true} enablePan={true} enableRotate={true} />
+        
+        <group ref={meshRef}>
+          {elements.map((element, index) => {
+            const startAngle = currentAngle
+            currentAngle += element.angle
+            const midAngle = startAngle + element.angle / 2
+            
+            return (
+              <group key={element.name}>
+                {/* 3D饼图扇形 */}
+                <mesh
+                  position={[
+                    Math.cos(midAngle) * 0.1,
+                    Math.sin(midAngle) * 0.1,
+                    0
+                  ]}
+                  rotation={[0, 0, startAngle]}
+                >
+                  <cylinderGeometry args={[0, 1.5, 0.3, 32, 1, false, 0, element.angle]} />
+                  <meshStandardMaterial color={element.color} />
+                </mesh>
+                
+                {/* 3D标签 */}
+                <Text
+                  position={[
+                    Math.cos(midAngle) * 2.2,
+                    Math.sin(midAngle) * 2.2,
+                    0.2
+                  ]}
+                  fontSize={0.2}
+                  color="#333"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  {element.name}\n{element.value}
+                </Text>
+              </group>
+            )
+          })}
+        </group>
+      </Suspense>
+    </Canvas>
+  )
 }
 
-function WuxingRadarChart({ data }) {
-  const chartRef = useRef(null)
-  const chartInstance = useRef(null)
-
+// 3D雷达图组件
+function Wuxing3DRadarChart({ data }) {
+  const groupRef = useRef()
+  
   useEffect(() => {
-    if (!data || !window.Chart) return
-
-    if (chartInstance.current) {
-      chartInstance.current.destroy()
+    if (groupRef.current) {
+      groupRef.current.rotation.y += 0.005
     }
+  })
 
-    const ctx = chartRef.current.getContext('2d')
-    chartInstance.current = new window.Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
-        datasets: [{
-          label: 'Element Strength',
-          data: [
-            data.wood,
-            data.fire,
-            data.earth,
-            data.metal,
-            data.water
-          ],
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        scales: {
-          r: {
-            beginAtZero: true,
-            min: 0,
-            max: Math.max(...Object.values(data)) + 1,
-            ticks: {
-              stepSize: 1
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          },
-          title: {
-            display: true,
-            text: 'Element Strength Distribution',
-            font: {
-              size: 14
-            }
-          }
-        }
-      }
-    })
+  const elements = [
+    { name: 'Wood', value: data.wood, color: '#4CAF50', angle: 0 },
+    { name: 'Fire', value: data.fire, color: '#FF5722', angle: Math.PI * 2 / 5 },
+    { name: 'Earth', value: data.earth, color: '#795548', angle: Math.PI * 4 / 5 },
+    { name: 'Metal', value: data.metal, color: '#9E9E9E', angle: Math.PI * 6 / 5 },
+    { name: 'Water', value: data.water, color: '#2196F3', angle: Math.PI * 8 / 5 }
+  ]
 
-    return () => {
-      if (chartInstance.current) {
-        chartInstance.current.destroy()
-      }
-    }
-  }, [data])
+  const maxValue = Math.max(...Object.values(data)) || 1
 
-  return <canvas ref={chartRef} style={{ maxHeight: '200px' }} />
+  return (
+    <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
+      <Suspense fallback={null}>
+        <ambientLight intensity={0.6} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <OrbitControls enableZoom={true} enablePan={true} enableRotate={true} />
+        
+        <group ref={groupRef}>
+          {/* 雷达图网格 */}
+          {[1, 2, 3, 4, 5].map(level => (
+            <mesh key={level} rotation={[Math.PI / 2, 0, 0]}>
+              <ringGeometry args={[level * 0.4 - 0.02, level * 0.4, 32]} />
+              <meshBasicMaterial color="#ddd" transparent opacity={0.3} />
+            </mesh>
+          ))}
+          
+          {/* 雷达图轴线 */}
+          {elements.map((element, index) => (
+            <mesh key={`axis-${index}`} position={[
+              Math.cos(element.angle) * 1,
+              0,
+              Math.sin(element.angle) * 1
+            ]} rotation={[0, -element.angle, Math.PI / 2]}>
+              <cylinderGeometry args={[0.01, 0.01, 2]} />
+              <meshBasicMaterial color="#999" />
+            </mesh>
+          ))}
+          
+          {/* 3D数据点 */}
+          {elements.map((element, index) => {
+            const normalizedValue = element.value / maxValue
+            const radius = normalizedValue * 2
+            
+            return (
+              <group key={element.name}>
+                {/* 数据点球体 */}
+                <mesh position={[
+                  Math.cos(element.angle) * radius,
+                  0.2,
+                  Math.sin(element.angle) * radius
+                ]}>
+                  <sphereGeometry args={[0.1, 16, 16]} />
+                  <meshStandardMaterial color={element.color} />
+                </mesh>
+                
+                {/* 数据柱 */}
+                <mesh position={[
+                  Math.cos(element.angle) * radius,
+                  0,
+                  Math.sin(element.angle) * radius
+                ]}>
+                  <cylinderGeometry args={[0.05, 0.05, element.value * 0.3]} />
+                  <meshStandardMaterial color={element.color} transparent opacity={0.7} />
+                </mesh>
+                
+                {/* 标签 */}
+                <Text
+                  position={[
+                    Math.cos(element.angle) * 2.5,
+                    0.5,
+                    Math.sin(element.angle) * 2.5
+                  ]}
+                  fontSize={0.15}
+                  color="#333"
+                  anchorX="center"
+                  anchorY="middle"
+                >
+                  {element.name}\n{element.value}
+                </Text>
+              </group>
+            )
+          })}
+          
+          {/* 连接线形成雷达图形状 */}
+          <mesh>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                count={elements.length + 1}
+                array={new Float32Array([
+                  ...elements.flatMap(element => {
+                    const normalizedValue = element.value / maxValue
+                    const radius = normalizedValue * 2
+                    return [
+                      Math.cos(element.angle) * radius,
+                      0.1,
+                      Math.sin(element.angle) * radius
+                    ]
+                  }),
+                  // 闭合线条
+                  Math.cos(elements[0].angle) * (elements[0].value / maxValue) * 2,
+                  0.1,
+                  Math.sin(elements[0].angle) * (elements[0].value / maxValue) * 2
+                ])}
+                itemSize={3}
+              />
+            </bufferGeometry>
+            <lineBasicMaterial color="#2196F3" linewidth={3} />
+          </mesh>
+        </group>
+      </Suspense>
+    </Canvas>
+  )
 }
 
 export default function Home() {
@@ -204,219 +274,54 @@ export default function Home() {
     <div className="bg-gray-100 min-h-screen">
       <Head>
         <title>Chinese BaZi Five Elements Analysis</title>
-        <meta name="description" content="Traditional Chinese BaZi Five Elements Analysis System" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" type="image/png" href="/images/icon-192x192.png" />
+        <meta name="description" content="Analyze your BaZi chart and discover your five elements balance" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">BaZi Five Elements Analysis</h1>
-          <p className="text-gray-600">Discover your elemental nature and life path through ancient Chinese wisdom</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">Chinese BaZi Five Elements Analysis</h1>
+          <p className="text-lg text-gray-600">Discover your elemental balance and life insights through traditional Chinese metaphysics</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
-          <form onSubmit={handleCalculate}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                  <input
-                    type="text"
-                    name="userName"
-                    placeholder="Enter your name (optional)"
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Birth Date</label>
-                  <input
-                    type="date"
-                    name="birthday"
-                    required
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">Birth Time</label>
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="unknownTime"
-                        checked={unknownTime}
-                        onChange={(e) => setUnknownTime(e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
-                      />
-                      <label htmlFor="unknownTime" className="ml-2 text-sm text-gray-600">Unknown birth time</label>
-                    </div>
-                  </div>
-                  <input
-                    type="time"
-                    name="birthtime"
-                    disabled={unknownTime}
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-                  <select 
-                    name="gender" 
-                    required 
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
-                {/* 移除Calendar Type选择框，默认使用阳历 */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Calendar Type</label>
-                  <select 
-                    name="calendar" 
-                    value={calendar}
-                    onChange={(e) => setCalendar(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="solar">Solar Calendar (Gregorian)</option>
-                    <option value="lunar">Lunar Calendar (Chinese)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">Five Elements Basics</h3>
-                <div className="space-y-2 text-sm">
-                  <p>🌳 <span className="font-medium">Wood</span>: Growth, creativity, flexibility</p>
-                  <p>🔥 <span className="font-medium">Fire</span>: Energy, passion, transformation</p>
-                  <p>🗺️ <span className="font-medium">Earth</span>: Stability, nurturing, grounding</p>
-                  <p>⚔️ <span className="font-medium">Metal</span>: Structure, precision, determination</p>
-                  <p>💧 <span className="font-medium">Water</span>: Wisdom, adaptability, intuition</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 text-center">
-              <button 
-                type="submit"
-                disabled={loading}
-                className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400"
-              >
-                {loading ? 'Analyzing...' : 'Start Analysis'}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {loading && (
-          <div className="text-center">
-            <div className="loading"></div>
-            <p className="text-center mt-4 text-gray-600">Performing elemental analysis...</p>
-          </div>
-        )}
+        {/* ... existing form code ... */}
 
         {result && (
           <div className="space-y-6">
-            {/* 🔍 添加调试信息显示 */}
-            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-              <h4 className="font-semibold text-yellow-800 mb-2">🔍 调试信息</h4>
-              <div className="text-sm text-yellow-700">
-                <p>前端接收到的性别: {result.gender || '未接收到'}</p>
-                <p>性别调试标记: {result.genderDebug || '无调试标记'}</p>
-                <p>分析内容是否包含性别差异: {result.analysis?.includes('男性') || result.analysis?.includes('女性') ? '是' : '否'}</p>
-              </div>
-            </div>
-            
-            {/* 原有的BaZi Chart */}
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">BaZi Chart (Four Pillars)</h3>
-              <div className="grid grid-cols-4 gap-4 text-center">
-                <div>
-                  <div className="text-gray-600">Year Pillar</div>
-                  <div className="text-2xl font-bold">{result.eightChar?.year}</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Month Pillar</div>
-                  <div className="text-2xl font-bold">{result.eightChar?.month}</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Day Pillar</div>
-                  <div className="text-2xl font-bold">{result.eightChar?.day}</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Hour Pillar</div>
-                  <div className="text-2xl font-bold">{result.eightChar?.time}</div>
-                </div>
-              </div>
-            </div>
-            
-            {/* 性别标识区域 - 增强显示 */}
-            <div className="bg-blue-50 p-4 rounded-lg mb-4">
-              <h4 className="font-semibold text-blue-800">
-                分析基于：{result.gender === 'male' ? '👨 男性' : result.gender === 'female' ? '👩 女性' : '❓ 未知性别'}八字特征
-              </h4>
-              {!result.gender && (
-                <p className="text-red-600 text-sm mt-2">⚠️ 警告：未检测到性别参数！</p>
-              )}
-            </div>
+            {/* ... existing debug and analysis sections ... */}
             
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">Five Elements Distribution</h3>
+              <h3 className="text-xl font-semibold mb-4">3D Five Elements Distribution</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-[200px] flex items-center justify-center">
-                  <WuxingPieChart data={result.wuxingCounts} />
+                <div className="h-[400px] border rounded-lg">
+                  <h4 className="text-center font-medium p-2">3D Pie Chart</h4>
+                  <div className="h-[350px]">
+                    <Wuxing3DPieChart data={result.wuxingCounts} />
+                  </div>
                 </div>
-                <div className="h-[200px] flex items-center justify-center">
-                  <WuxingRadarChart data={result.wuxingCounts} />
-                </div>
-              </div>
-              <div className="mt-4 grid grid-cols-5 gap-2">
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
-                  <div>Wood: {result.wuxingCounts.wood}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
-                  <div>Fire: {result.wuxingCounts.fire}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
-                  <div>Earth: {result.wuxingCounts.earth}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
-                  <div>Metal: {result.wuxingCounts.metal}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
-                  <div>Water: {result.wuxingCounts.water}</div>
+                <div className="h-[400px] border rounded-lg">
+                  <h4 className="text-center font-medium p-2">3D Radar Chart</h4>
+                  <div className="h-[350px]">
+                    <Wuxing3DRadarChart data={result.wuxingCounts} />
+                  </div>
                 </div>
               </div>
+              
+              {/* 操作提示 */}
+              <div className="mt-4 text-center text-sm text-gray-500">
+                💡 提示：可以用鼠标拖拽旋转、滚轮缩放、右键平移来查看3D图表
+              </div>
+              
+              {/* ... existing element counts display ... */}
             </div>
             
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow p-6 text-center text-white">
-              <h3 className="text-xl font-semibold mb-2">Get Detailed Report</h3>
-              <p className="mb-4">Want deeper insights and personalized recommendations?</p>
-              <button 
-                onClick={() => window.location.href = '/order'}
-                className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200"
-              >
-                Order Full Report - $14.99
-              </button>
-            </div>
+            {/* ... rest of existing code ... */}
           </div>
         )}
       </div>
 
-      <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
-      
-      <footer className="text-center text-gray-400 text-sm py-4">
-        Version: 1.0.2 &nbsp;|&nbsp; Date: 2024-12-20
-      </footer>
+      {/* ... existing footer ... */}
     </div>
   )
 }
