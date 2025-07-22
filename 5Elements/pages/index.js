@@ -295,98 +295,102 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 以下内容全部删除或注释掉 */}
-            {/*
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">五行分布</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-[200px] flex items-center justify-center">
-                  <WuxingPieChart data={result.wuxingCounts} />
+            {result && (
+              <div className="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 className="text-xl font-semibold mb-4">五行分布</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="h-[200px] flex items-center justify-center">
+                    <WuxingPieChart data={result.wuxingCounts} />
+                  </div>
+                  <div className="h-[200px] flex items-center justify-center">
+                    <WuxingRadarChart data={result.wuxingCounts} />
+                  </div>
                 </div>
-                <div className="h-[200px] flex items-center justify-center">
-                  <WuxingRadarChart data={result.wuxingCounts} />
+                <div className="mt-4 grid grid-cols-5 gap-2">
+                  <div className="text-center">
+                    <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
+                    <div>木: {result.wuxingCounts.wood}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
+                    <div>火: {result.wuxingCounts.fire}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
+                    <div>土: {result.wuxingCounts.earth}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
+                    <div>金: {result.wuxingCounts.metal}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
+                    <div>水: {result.wuxingCounts.water}</div>
+                  </div>
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-5 gap-2">
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
-                  <div>木: {result.wuxingCounts.wood}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
-                  <div>火: {result.wuxingCounts.fire}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
-                  <div>土: {result.wuxingCounts.earth}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
-                  <div>金: {result.wuxingCounts.metal}</div>
-                </div>
-                <div className="text-center">
-                  <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
-                  <div>水: {result.wuxingCounts.water}</div>
+            )}
+            {result && (
+              <div className="bg-white rounded-lg shadow p-6 mb-6">
+                <h3 className="text-xl font-semibold mb-4">五行分析</h3>
+                <div className="space-y-4">
+                  <div className="prose max-w-none">
+                    <h4 className="text-lg font-medium mb-2">五行特征</h4>
+                    <p className="whitespace-pre-line">{result.analysis}</p>
+                  </div>
+                  <div className="mt-4">
+                    <h4 className="text-lg font-medium mb-2">五行关系</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 p-4 rounded">
+                        <h5 className="font-medium mb-2">生克关系</h5>
+                        <ul className="list-disc list-inside space-y-1">
+                          <li>木生火：生长之气助长温暖光明</li>
+                          <li>火生土：温暖之气促进包容稳重</li>
+                          <li>土生金：包容之气增强坚毅果断</li>
+                          <li>金生水：果断之气化为智慧灵动</li>
+                          <li>水生木：智慧之气助益生长向上</li>
+                        </ul>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded">
+                        <h5 className="font-medium mb-2">五行平衡建议</h5>
+                        <p className="whitespace-pre-line">{result.wuxingAdvice}</p>
+                        {result.detailedAdvice && (
+                          <p className="mt-2 text-sm text-gray-600">{result.detailedAdvice}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {result.fortunePrediction && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-medium mb-2">运势预测</h4>
+                      <p className="bg-gray-50 p-4 rounded">{result.fortunePrediction}</p>
+                    </div>
+                  )}
+                  {result.nameAnalysis && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-medium mb-2">姓名五行分析</h4>
+                      <div className="bg-gray-50 p-4 rounded">
+                        <p>姓名五行：{result.nameAnalysis.wuxing.map(w => `${w.char}(${w.element})`).join(' ')}</p>
+                        <p className="mt-2">{result.nameAnalysis.compatibility?.summary}</p>
+                      </div>
+                    </div>
+                  )}
+                  {result.nayinTable && (
+                    <div className="mt-4">
+                      <h4 className="text-lg font-medium mb-2">纳音五行</h4>
+                      <p className="whitespace-pre-line bg-gray-50 p-4 rounded">{result.nayinTable}</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">五行分析</h3>
-              <div className="space-y-4">
-                <div className="prose max-w-none">
-                  <h4 className="text-lg font-medium mb-2">五行特征</h4>
-                  <p className="whitespace-pre-line">{result.analysis}</p>
-                </div>
-                
-                <div className="mt-4">
-                  <h4 className="text-lg font-medium mb-2">五行关系</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gray-50 p-4 rounded">
-                      <h5 className="font-medium mb-2">生克关系</h5>
-                      <ul className="list-disc list-inside space-y-1">
-                        <li>木生火：生长之气助长温暖光明</li>
-                        <li>火生土：温暖之气促进包容稳重</li>
-                        <li>土生金：包容之气增强坚毅果断</li>
-                        <li>金生水：果断之气化为智慧灵动</li>
-                        <li>水生木：智慧之气助益生长向上</li>
-                      </ul>
-                    </div>
-                    <div className="bg-gray-50 p-4 rounded">
-                      <h5 className="font-medium mb-2">五行平衡建议</h5>
-                      <p className="whitespace-pre-line">{result.wuxingAdvice}</p>
-                      {result.detailedAdvice && (
-                        <p className="mt-2 text-sm text-gray-600">{result.detailedAdvice}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                
-                {result.fortunePrediction && (
-                  <div className="mt-4">
-                    <h4 className="text-lg font-medium mb-2">运势预测</h4>
-                    <p className="bg-gray-50 p-4 rounded">{result.fortunePrediction}</p>
-                  </div>
-                )}
-                
-                {result.nameAnalysis && (
-                  <div className="mt-4">
-                    <h4 className="text-lg font-medium mb-2">姓名五行分析</h4>
-                    <div className="bg-gray-50 p-4 rounded">
-                      <p>姓名五行：{result.nameAnalysis.wuxing.map(w => `${w.char}(${w.element})`).join(' ')}</p>
-                      <p className="mt-2">{result.nameAnalysis.compatibility?.summary}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {result.nayinTable && (
-                  <div className="mt-4">
-                    <h4 className="text-lg font-medium mb-2">纳音五行</h4>
-                    <p className="whitespace-pre-line bg-gray-50 p-4 rounded">{result.nayinTable}</p>
-                  </div>
-                )}
+            )}
+            {result && (
+              <div className="fixed bottom-0 left-0 w-full bg-white shadow-inner flex flex-col items-center py-2 z-50">
+                <a href="/mall" className="mb-1">
+                  <button className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition text-xs">前往五行能量商城</button>
+                </a>
               </div>
-            </div>
+            )}
           </div>
         )}
         {result && (
