@@ -17,7 +17,7 @@ function WuxingPieChart({ data }) {
     chartInstance.current = new window.Chart(ctx, {
       type: 'pie',
       data: {
-        labels: ['木', '火', '土', '金', '水'],
+        labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
         datasets: [{
           data: [
             data.wood,
@@ -27,11 +27,11 @@ function WuxingPieChart({ data }) {
             data.water
           ],
           backgroundColor: [
-            '#4CAF50', // 木
-            '#FF5722', // 火
-            '#795548', // 土
-            '#9E9E9E', // 金
-            '#2196F3'  // 水
+            '#4CAF50', // Wood
+            '#FF5722', // Fire
+            '#795548', // Earth
+            '#9E9E9E', // Metal
+            '#2196F3'  // Water
           ]
         }]
       },
@@ -49,7 +49,7 @@ function WuxingPieChart({ data }) {
           },
           title: {
             display: true,
-            text: '五行分布',
+            text: 'Five Elements Distribution',
             font: {
               size: 14
             }
@@ -83,9 +83,9 @@ function WuxingRadarChart({ data }) {
     chartInstance.current = new window.Chart(ctx, {
       type: 'radar',
       data: {
-        labels: ['木', '火', '土', '金', '水'],
+        labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
         datasets: [{
-          label: '五行强度',
+          label: 'Element Strength',
           data: [
             data.wood,
             data.fire,
@@ -120,7 +120,7 @@ function WuxingRadarChart({ data }) {
           },
           title: {
             display: true,
-            text: '五行强度分布',
+            text: 'Element Strength Distribution',
             font: {
               size: 14
             }
@@ -188,12 +188,12 @@ export default function Home() {
 
       const responseData = await res.json()
       if (!responseData.success) {
-        throw new Error(responseData.error || '计算失败')
+        throw new Error(responseData.error || 'Calculation failed')
       }
 
       setResult(responseData.data)
     } catch (error) {
-      console.error('计算失败：', error)
+      console.error('Calculation failed:', error)
       alert(error.message)
     } finally {
       setLoading(false)
@@ -203,8 +203,8 @@ export default function Home() {
   return (
     <div className="bg-gray-100 min-h-screen">
       <Head>
-        <title>八字五行分析系统</title>
-        <meta name="description" content="基于八字理论的五行分析系统" />
+        <title>Chinese BaZi Five Elements Analysis</title>
+        <meta name="description" content="Traditional Chinese BaZi Five Elements Analysis System" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" type="image/png" href="/images/icon-192x192.png" />
@@ -212,8 +212,8 @@ export default function Home() {
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">八字五行分析系统</h1>
-          <p className="text-gray-600">探索你的命理五行，找寻人生方向</p>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">BaZi Five Elements Analysis</h1>
+          <p className="text-gray-600">Discover your elemental nature and life path through ancient Chinese wisdom</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
@@ -221,17 +221,17 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">姓名</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
                   <input
                     type="text"
                     name="userName"
-                    placeholder="请输入姓名（选填）"
+                    placeholder="Enter your name (optional)"
                     className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">出生日期</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Birth Date</label>
                   <input
                     type="date"
                     name="birthday"
@@ -242,7 +242,7 @@ export default function Home() {
                 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">出生时间</label>
+                    <label className="block text-sm font-medium text-gray-700">Birth Time</label>
                     <div className="flex items-center">
                       <input
                         type="checkbox"
@@ -251,7 +251,7 @@ export default function Home() {
                         onChange={(e) => setUnknownTime(e.target.checked)}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4"
                       />
-                      <label htmlFor="unknownTime" className="ml-2 text-sm text-gray-600">不清楚出生时间</label>
+                      <label htmlFor="unknownTime" className="ml-2 text-sm text-gray-600">Unknown birth time</label>
                     </div>
                   </div>
                   <input
@@ -263,39 +263,39 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">性别</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                   <select 
                     name="gender" 
                     required 
                     className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="male">男</option>
-                    <option value="female">女</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">历法选择</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Calendar Type</label>
                   <select 
                     name="calendar" 
                     value={calendar}
                     onChange={(e) => setCalendar(e.target.value)}
                     className="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="solar">阳历（公历）</option>
-                    <option value="lunar">阴历（农历）</option>
+                    <option value="solar">Solar Calendar (Gregorian)</option>
+                    <option value="lunar">Lunar Calendar (Chinese)</option>
                   </select>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-4">五行基础知识</h3>
+                <h3 className="text-lg font-semibold mb-4">Five Elements Basics</h3>
                 <div className="space-y-2 text-sm">
-                  <p>🌳 <span className="font-medium">木</span>：代表生长、向上</p>
-                  <p>🔥 <span className="font-medium">火</span>：代表温暖、光明</p>
-                  <p>🗺️ <span className="font-medium">土</span>：代表稳重、包容</p>
-                  <p>⚔️ <span className="font-medium">金</span>：代表坚强、果断</p>
-                  <p>💧 <span className="font-medium">水</span>：代表智慧、灵活</p>
+                  <p>🌳 <span className="font-medium">Wood</span>: Growth, creativity, flexibility</p>
+                  <p>🔥 <span className="font-medium">Fire</span>: Energy, passion, transformation</p>
+                  <p>🗺️ <span className="font-medium">Earth</span>: Stability, nurturing, grounding</p>
+                  <p>⚔️ <span className="font-medium">Metal</span>: Structure, precision, determination</p>
+                  <p>💧 <span className="font-medium">Water</span>: Wisdom, adaptability, intuition</p>
                 </div>
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function Home() {
                 disabled={loading}
                 className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200 disabled:bg-gray-400"
               >
-                {loading ? '分析中...' : '开始分析'}
+                {loading ? 'Analyzing...' : 'Start Analysis'}
               </button>
             </div>
           </form>
@@ -315,37 +315,36 @@ export default function Home() {
         {loading && (
           <div className="text-center">
             <div className="loading"></div>
-            <p className="text-center mt-4 text-gray-600">正在进行命理分析...</p>
+            <p className="text-center mt-4 text-gray-600">Performing elemental analysis...</p>
           </div>
         )}
 
         {result && (
           <div className="space-y-6">
-            {/* 现有的八字和图表显示 */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">八字</h3>
+              <h3 className="text-xl font-semibold mb-4">BaZi Chart (Four Pillars)</h3>
               <div className="grid grid-cols-4 gap-4 text-center">
                 <div>
-                  <div className="text-gray-600">年柱</div>
+                  <div className="text-gray-600">Year Pillar</div>
                   <div className="text-2xl font-bold">{result.eightChar?.year}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">月柱</div>
+                  <div className="text-gray-600">Month Pillar</div>
                   <div className="text-2xl font-bold">{result.eightChar?.month}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">日柱</div>
+                  <div className="text-gray-600">Day Pillar</div>
                   <div className="text-2xl font-bold">{result.eightChar?.day}</div>
                 </div>
                 <div>
-                  <div className="text-gray-600">时柱</div>
+                  <div className="text-gray-600">Hour Pillar</div>
                   <div className="text-2xl font-bold">{result.eightChar?.time}</div>
                 </div>
               </div>
             </div>
 
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">五行分布</h3>
+              <h3 className="text-xl font-semibold mb-4">Five Elements Distribution</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="h-[200px] flex items-center justify-center">
                   <WuxingPieChart data={result.wuxingCounts} />
@@ -357,36 +356,35 @@ export default function Home() {
               <div className="mt-4 grid grid-cols-5 gap-2">
                 <div className="text-center">
                   <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
-                  <div>木: {result.wuxingCounts.wood}</div>
+                  <div>Wood: {result.wuxingCounts.wood}</div>
                 </div>
                 <div className="text-center">
                   <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
-                  <div>火: {result.wuxingCounts.fire}</div>
+                  <div>Fire: {result.wuxingCounts.fire}</div>
                 </div>
                 <div className="text-center">
                   <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
-                  <div>土: {result.wuxingCounts.earth}</div>
+                  <div>Earth: {result.wuxingCounts.earth}</div>
                 </div>
                 <div className="text-center">
                   <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
-                  <div>金: {result.wuxingCounts.metal}</div>
+                  <div>Metal: {result.wuxingCounts.metal}</div>
                 </div>
                 <div className="text-center">
                   <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
-                  <div>水: {result.wuxingCounts.water}</div>
+                  <div>Water: {result.wuxingCounts.water}</div>
                 </div>
               </div>
             </div>
             
-            {/* 添加订购按钮 */}
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow p-6 text-center text-white">
-              <h3 className="text-xl font-semibold mb-2">获取详细报告</h3>
-              <p className="mb-4">想要更深入的五行分析和个性化建议？</p>
+              <h3 className="text-xl font-semibold mb-2">Get Detailed Report</h3>
+              <p className="mb-4">Want deeper insights and personalized recommendations?</p>
               <button 
                 onClick={() => window.location.href = '/order'}
                 className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200"
               >
-                立即订购详细报告 ¥99
+                Order Full Report - $14.99
               </button>
             </div>
           </div>
@@ -396,7 +394,7 @@ export default function Home() {
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
       
       <footer className="text-center text-gray-400 text-sm py-4">
-        版本号：1.0.1 &nbsp;|&nbsp; 日期：2024-12-19
+        Version: 1.0.1 &nbsp;|&nbsp; Date: 2024-12-19
       </footer>
     </div>
   )
