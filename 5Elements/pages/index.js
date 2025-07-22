@@ -274,6 +274,7 @@ export default function Home() {
           <div className="space-y-6">
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">八字</h3>
+              {/* 八字显示保留 */}
               <div className="grid grid-cols-4 gap-4 text-center">
                 <div>
                   <div className="text-gray-600">年柱</div>
@@ -294,6 +295,8 @@ export default function Home() {
               </div>
             </div>
 
+            {/* 以下内容全部删除或注释掉 */}
+            {/*
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">五行分布</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -387,6 +390,20 @@ export default function Home() {
           </div>
         )}
         {result && (
+          <div className="fixed bottom-0 left-0 w-full bg-white shadow-inner flex flex-col items-center py-2 z-50">
+            <div className="w-full max-w-2xl text-xs grid grid-cols-4 gap-1 mb-1 px-2">
+              <div><span className="font-medium">公历：</span>{result.solarDate}</div>
+              <div><span className="font-medium">农历：</span>{result.lunarDate}</div>
+              <div><span className="font-medium">生肖：</span>{result.zodiac}</div>
+              <div><span className="font-medium">节气：</span>{result.solarTerm}</div>
+              <div><span className="font-medium">八字：</span>{[result.eightChar?.year, result.eightChar?.month, result.eightChar?.day, result.eightChar?.time || '未知'].join(' ')}</div>
+              <div><span className="font-medium">纳音：</span>{[result.nayin?.year, result.nayin?.month, result.nayin?.day, result.nayin?.time || '未知'].join(' ')}</div>
+              <div><span className="font-medium">十神：</span>{[result.tenGods?.year, result.tenGods?.month, result.tenGods?.day, result.tenGods?.time || '未知'].join(' ')}</div>
+            </div>
+            <a href="/mall" className="mb-1">
+              <button className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition text-xs">前往五行能量商城</button>
+            </a>
+          </div>
           <div className="mt-8 flex flex-col items-center">
             <div className="bg-white rounded-lg shadow p-4 w-full max-w-xl text-sm">
               <div className="grid grid-cols-2 gap-2 mb-2">
