@@ -273,7 +273,7 @@ export default function Home() {
                     <option value="female">Female</option>
                   </select>
                 </div>
-
+                {/* 移除Calendar Type选择框，默认使用阳历 */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Calendar Type</label>
                   <select 
@@ -343,6 +343,85 @@ export default function Home() {
               </div>
             </div>
 
+            {/* 在BaZi Chart后，Five Elements Distribution前添加分析区域 */}
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">Five Elements Energy Balance Analysis</h3>
+              
+              {/* 概念解释 */}
+              <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                <h4 className="font-semibold text-blue-800 mb-2">Understanding Five Elements Balance</h4>
+                <p className="text-sm text-blue-700">
+                  In traditional Chinese philosophy, optimal health and fortune come from balanced five elements energy. 
+                  Each element should ideally represent about 20% (1.6 out of 8 total) of your birth chart. 
+                  Imbalances can indicate areas of strength, weakness, or potential challenges in your life path.
+                </p>
+              </div>
+
+              {/* 用户数值分析 */}
+              <div className="space-y-3">
+                <h4 className="font-semibold mb-3">Your Personal Element Analysis:</h4>
+                
+                {/* 动态生成每个元素的分析 */}
+                {Object.entries(result.wuxingCounts).map(([element, count]) => {
+                  const percentage = ((count / 8) * 100).toFixed(1);
+                  const isBalanced = count >= 1 && count <= 2;
+                  const isExcessive = count > 2;
+                  const isDeficient = count === 0;
+                  
+                  let status = 'Balanced';
+                  let statusColor = 'text-green-600';
+                  let bgColor = 'bg-green-50';
+                  
+                  if (isExcessive) {
+                    status = 'Excessive';
+                    statusColor = 'text-red-600';
+                    bgColor = 'bg-red-50';
+                  } else if (isDeficient) {
+                    status = 'Deficient';
+                    statusColor = 'text-orange-600';
+                    bgColor = 'bg-orange-50';
+                  }
+                  
+                  return (
+                    <div key={element} className={`p-3 rounded-lg ${bgColor}`}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium capitalize">{element}</span>
+                        <div className="text-right">
+                          <span className="text-lg font-bold">{count}/8</span>
+                          <span className="text-sm text-gray-600 ml-2">({percentage}%)</span>
+                          <span className={`ml-2 text-sm font-medium ${statusColor}`}>{status}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* 总体平衡评估 */}
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold mb-2">Overall Balance Assessment:</h4>
+                <p className="text-sm text-gray-700">
+                  {(() => {
+                    const counts = Object.values(result.wuxingCounts);
+                    const balanced = counts.filter(c => c >= 1 && c <= 2).length;
+                    const excessive = counts.filter(c => c > 2).length;
+                    const deficient = counts.filter(c => c === 0).length;
+                    
+                    if (balanced >= 4) {
+                      return "Your five elements show good overall balance, indicating natural harmony in your life approach.";
+                    } else if (excessive >= 2) {
+                      return "You have strong elemental concentrations, suggesting powerful but potentially unbalanced energies.";
+                    } else if (deficient >= 2) {
+                      return "Some elements are missing, indicating areas where you might seek external support or development.";
+                    } else {
+                      return "Your elemental distribution shows a mixed pattern with both strengths and areas for growth.";
+                    }
+                  })()
+                  }
+                </p>
+              </div>
+            </div>
+
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">Five Elements Distribution</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -394,7 +473,7 @@ export default function Home() {
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
       
       <footer className="text-center text-gray-400 text-sm py-4">
-        Version: 1.0.1 &nbsp;|&nbsp; Date: 2024-12-19
+        Version: 1.0.2 &nbsp;|&nbsp; Date: 2024-12-20
       </footer>
     </div>
   )
