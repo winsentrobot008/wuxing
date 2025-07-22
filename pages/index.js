@@ -209,6 +209,146 @@ function Wuxing3DRadarChart({ data }) {
   )
 }
 
+// 2D饼图组件
+function WuxingPieChart({ data }) {
+  const canvasRef = useRef(null)
+  const chartRef = useRef(null)
+
+  useEffect(() => {
+    if (canvasRef.current && window.Chart) {
+      const ctx = canvasRef.current.getContext('2d')
+      
+      // 销毁之前的图表
+      if (chartRef.current) {
+        chartRef.current.destroy()
+      }
+
+      chartRef.current = new window.Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['木 (Wood)', '火 (Fire)', '土 (Earth)', '金 (Metal)', '水 (Water)'],
+          datasets: [{
+            data: [data.wood, data.fire, data.earth, data.metal, data.water],
+            backgroundColor: [
+              '#4CAF50', // 木 - 绿色
+              '#FF5722', // 火 - 红色
+              '#795548', // 土 - 棕色
+              '#9E9E9E', // 金 - 灰色
+              '#2196F3'  // 水 - 蓝色
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0)
+                  const percentage = ((context.parsed / total) * 100).toFixed(1)
+                  return `${context.label}: ${context.parsed} (${percentage}%)`
+                }
+              }
+            }
+          }
+        }
+      })
+    }
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy()
+      }
+    }
+  }, [data])
+
+  return <canvas ref={canvasRef}></canvas>
+}
+
+// 2D雷达图组件
+function WuxingRadarChart({ data }) {
+  const canvasRef = useRef(null)
+  const chartRef = useRef(null)
+
+  useEffect(() => {
+    if (canvasRef.current && window.Chart) {
+      const ctx = canvasRef.current.getContext('2d')
+      
+      // 销毁之前的图表
+      if (chartRef.current) {
+        chartRef.current.destroy()
+      }
+
+      chartRef.current = new window.Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['木 (Wood)', '火 (Fire)', '土 (Earth)', '金 (Metal)', '水 (Water)'],
+          datasets: [{
+            label: '五行分布',
+            data: [data.wood, data.fire, data.earth, data.metal, data.water],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            pointBackgroundColor: [
+              '#4CAF50', // 木
+              '#FF5722', // 火
+              '#795548', // 土
+              '#9E9E9E', // 金
+              '#2196F3'  // 水
+            ],
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 2,
+            pointRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: Math.max(...Object.values(data)) + 1,
+              ticks: {
+                stepSize: 1
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              },
+              angleLines: {
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            }
+          }
+        }
+      })
+    }
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy()
+      }
+    }
+  }, [data])
+
+  return <canvas ref={canvasRef}></canvas>
+}
+
 export default function Home() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
@@ -239,7 +379,7 @@ export default function Home() {
       hour,
       noHour: unknownTime,
       gender: formData.get('gender'),
-      userName: formData.get('userName'),
+      userName: formData.get('userName') || '未提供', // 姓名可以为空
       calendar: formData.get('calendar')
     }
 
@@ -279,6 +419,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      {/* Chart.js CDN */}
+      <Script 
+        src="https://cdn.jsdelivr.net/npm/chart.js" 
+        strategy="beforeInteractive"
+      />
+
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">Chinese BaZi Five Elements Analysis</h1>
@@ -290,13 +436,12 @@ export default function Home() {
           <form onSubmit={handleCalculate} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">姓名 (Name)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">姓名 (Name) <span className="text-gray-400">(可选)</span></label>
                 <input
                   type="text"
                   name="userName"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="请输入您的姓名"
-                  required
+                  placeholder="请输入您的姓名（可选）"
                 />
               </div>
               
@@ -476,27 +621,22 @@ export default function Home() {
               </div>
             )}
 
-            {/* 3D五行分布图表 */}
+            {/* 2D五行分布图表 */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">🎯 3D五行分布图表 (3D Five Elements Distribution)</h3>
+              <h3 className="text-xl font-semibold mb-4">📊 五行分布图表 (Five Elements Distribution)</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="h-[400px] border rounded-lg">
-                  <h4 className="text-center font-medium p-2">3D饼图 (3D Pie Chart)</h4>
-                  <div className="h-[350px]">
-                    <Wuxing3DPieChart data={result.wuxingCounts} />
+                <div className="h-[400px] border rounded-lg p-4">
+                  <h4 className="text-center font-medium mb-4">饼图 (Pie Chart)</h4>
+                  <div className="h-[320px]">
+                    <WuxingPieChart data={result.wuxingCounts} />
                   </div>
                 </div>
-                <div className="h-[400px] border rounded-lg">
-                  <h4 className="text-center font-medium p-2">3D雷达图 (3D Radar Chart)</h4>
-                  <div className="h-[350px]">
-                    <Wuxing3DRadarChart data={result.wuxingCounts} />
+                <div className="h-[400px] border rounded-lg p-4">
+                  <h4 className="text-center font-medium mb-4">雷达图 (Radar Chart)</h4>
+                  <div className="h-[320px]">
+                    <WuxingRadarChart data={result.wuxingCounts} />
                   </div>
                 </div>
-              </div>
-              
-              {/* 操作提示 */}
-              <div className="mt-4 text-center text-sm text-gray-500">
-                💡 提示：可以用鼠标拖拽旋转、滚轮缩放、右键平移来查看3D图表
               </div>
             </div>
 
