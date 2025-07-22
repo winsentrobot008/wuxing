@@ -321,6 +321,17 @@ export default function Home() {
 
         {result && (
           <div className="space-y-6">
+            {/* 🔍 添加调试信息显示 */}
+            <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
+              <h4 className="font-semibold text-yellow-800 mb-2">🔍 调试信息</h4>
+              <div className="text-sm text-yellow-700">
+                <p>前端接收到的性别: {result.gender || '未接收到'}</p>
+                <p>性别调试标记: {result.genderDebug || '无调试标记'}</p>
+                <p>分析内容是否包含性别差异: {result.analysis?.includes('男性') || result.analysis?.includes('女性') ? '是' : '否'}</p>
+              </div>
+            </div>
+            
+            {/* 原有的BaZi Chart */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">BaZi Chart (Four Pillars)</h3>
               <div className="grid grid-cols-4 gap-4 text-center">
@@ -342,178 +353,17 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* 在BaZi Chart后，Five Elements Distribution前添加分析区域 */}
-            <div className="bg-white rounded-lg shadow p-6 mb-6">
-              <h3 className="text-xl font-semibold mb-4">Five Elements Energy Balance Analysis</h3>
-              
-              {/* 概念解释 */}
-              // 在结果显示区域添加调试信息
-              {result && (
-                // 在结果显示区域添加调试信息
-                {result && (
-                  <div className="space-y-6">
-                    {/* 🔍 添加调试信息显示 */}
-                    <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-                      <h4 className="font-semibold text-yellow-800 mb-2">🔍 调试信息</h4>
-                      <div className="text-sm text-yellow-700">
-                        <p>前端接收到的性别: {result.gender || '未接收到'}</p>
-                        <p>性别调试标记: {result.genderDebug || '无调试标记'}</p>
-                        <p>分析内容是否包含性别差异: {result.analysis?.includes('男性') || result.analysis?.includes('女性') ? '是' : '否'}</p>
-                      </div>
-                    </div>
-                    
-                    {/* 原有的BaZi Chart */}
-                    <div className="bg-white rounded-lg shadow p-6 mb-6">
-                      <h3 className="text-xl font-semibold mb-4">BaZi Chart (Four Pillars)</h3>
-                      <div className="grid grid-cols-4 gap-4 text-center">
-                        <div>
-                          <div className="text-gray-600">Year Pillar</div>
-                          <div className="text-2xl font-bold">{result.eightChar?.year}</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-600">Month Pillar</div>
-                          <div className="text-2xl font-bold">{result.eightChar?.month}</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-600">Day Pillar</div>
-                          <div className="text-2xl font-bold">{result.eightChar?.day}</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-600">Hour Pillar</div>
-                          <div className="text-2xl font-bold">{result.eightChar?.time}</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* 性别标识区域 - 增强显示 */}
-                    <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                      <h4 className="font-semibold text-blue-800">
-                        分析基于：{result.gender === 'male' ? '👨 男性' : result.gender === 'female' ? '👩 女性' : '❓ 未知性别'}八字特征
-                      </h4>
-                      {!result.gender && (
-                        <p className="text-red-600 text-sm mt-2">⚠️ 警告：未检测到性别参数！</p>
-                      )}
-                    </div>
-                    
-                    <div className="bg-white rounded-lg shadow p-6 mb-6">
-                      <h3 className="text-xl font-semibold mb-4">Five Elements Distribution</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="h-[200px] flex items-center justify-center">
-                          <WuxingPieChart data={result.wuxingCounts} />
-                        </div>
-                        <div className="h-[200px] flex items-center justify-center">
-                          <WuxingRadarChart data={result.wuxingCounts} />
-                        </div>
-                      </div>
-                      <div className="mt-4 grid grid-cols-5 gap-2">
-                        <div className="text-center">
-                          <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
-                          <div>Wood: {result.wuxingCounts.wood}</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
-                          <div>Fire: {result.wuxingCounts.fire}</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
-                          <div>Earth: {result.wuxingCounts.earth}</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
-                          <div>Metal: {result.wuxingCounts.metal}</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
-                          <div>Water: {result.wuxingCounts.water}</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow p-6 text-center text-white">
-                      <h3 className="text-xl font-semibold mb-2">Get Detailed Report</h3>
-                      <p className="mb-4">Want deeper insights and personalized recommendations?</p>
-                      <button 
-                        onClick={() => window.location.href = '/order'}
-                        className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200"
-                      >
-                        Order Full Report - $14.99
-                      </button>
-                    </div>
-                  </div>
-                )}
-              <p className="text-sm text-blue-700">
-                  In traditional Chinese philosophy, optimal health and fortune come from balanced five elements energy. 
-                  Each element should ideally represent about 20% (1.6 out of 8 total) of your birth chart. 
-                  Imbalances can indicate areas of strength, weakness, or potential challenges in your life path.
-                </p>
-              </div>
-
-              {/* 用户数值分析 */}
-              <div className="space-y-3">
-                <h4 className="font-semibold mb-3">Your Personal Element Analysis:</h4>
-                
-                {/* 动态生成每个元素的分析 */}
-                {Object.entries(result.wuxingCounts).map(([element, count]) => {
-                  const percentage = ((count / 8) * 100).toFixed(1);
-                  const isBalanced = count >= 1 && count <= 2;
-                  const isExcessive = count > 2;
-                  const isDeficient = count === 0;
-                  
-                  let status = 'Balanced';
-                  let statusColor = 'text-green-600';
-                  let bgColor = 'bg-green-50';
-                  
-                  if (isExcessive) {
-                    status = 'Excessive';
-                    statusColor = 'text-red-600';
-                    bgColor = 'bg-red-50';
-                  } else if (isDeficient) {
-                    status = 'Deficient';
-                    statusColor = 'text-orange-600';
-                    bgColor = 'bg-orange-50';
-                  }
-                  
-                  return (
-                    <div key={element} className={`p-3 rounded-lg ${bgColor}`}>
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium capitalize">{element}</span>
-                        <div className="text-right">
-                          <span className="text-lg font-bold">{count}/8</span>
-                          <span className="text-sm text-gray-600 ml-2">({percentage}%)</span>
-                          <span className={`ml-2 text-sm font-medium ${statusColor}`}>{status}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              {/* 总体平衡评估 */}
-              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold mb-2">Overall Balance Assessment:</h4>
-                <p className="text-sm text-gray-700">
-                  {(() => {
-                    const counts = Object.values(result.wuxingCounts);
-                    const balanced = counts.filter(c => c >= 1 && c <= 2).length;
-                    const excessive = counts.filter(c => c > 2).length;
-                    const deficient = counts.filter(c => c === 0).length;
-                    
-                    if (balanced >= 4) {
-                      return "Your five elements show good overall balance, indicating natural harmony in your life approach.";
-                    } else if (excessive >= 2) {
-                      return "You have strong elemental concentrations, suggesting powerful but potentially unbalanced energies.";
-                    } else if (deficient >= 2) {
-                      return "Some elements are missing, indicating areas where you might seek external support or development.";
-                    } else {
-                      return "Your elemental distribution shows a mixed pattern with both strengths and areas for growth.";
-                    }
-                  })()
-                  }
-                </p>
-              </div>
+            
+            {/* 性别标识区域 - 增强显示 */}
+            <div className="bg-blue-50 p-4 rounded-lg mb-4">
+              <h4 className="font-semibold text-blue-800">
+                分析基于：{result.gender === 'male' ? '👨 男性' : result.gender === 'female' ? '👩 女性' : '❓ 未知性别'}八字特征
+              </h4>
+              {!result.gender && (
+                <p className="text-red-600 text-sm mt-2">⚠️ 警告：未检测到性别参数！</p>
+              )}
             </div>
-
+            
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">Five Elements Distribution</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
