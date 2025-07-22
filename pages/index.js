@@ -321,6 +321,7 @@ export default function Home() {
 
         {result && (
           <div className="space-y-6">
+            {/* 现有的八字和图表显示 */}
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h3 className="text-xl font-semibold mb-4">八字</h3>
               <div className="grid grid-cols-4 gap-4 text-center">
@@ -342,6 +343,52 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white rounded-lg shadow p-6 mb-6">
+              <h3 className="text-xl font-semibold mb-4">五行分布</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="h-[200px] flex items-center justify-center">
+                  <WuxingPieChart data={result.wuxingCounts} />
+                </div>
+                <div className="h-[200px] flex items-center justify-center">
+                  <WuxingRadarChart data={result.wuxingCounts} />
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-5 gap-2">
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#4CAF50] mx-auto mb-1"></div>
+                  <div>木: {result.wuxingCounts.wood}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#FF5722] mx-auto mb-1"></div>
+                  <div>火: {result.wuxingCounts.fire}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#795548] mx-auto mb-1"></div>
+                  <div>土: {result.wuxingCounts.earth}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#9E9E9E] mx-auto mb-1"></div>
+                  <div>金: {result.wuxingCounts.metal}</div>
+                </div>
+                <div className="text-center">
+                  <div className="w-4 h-4 bg-[#2196F3] mx-auto mb-1"></div>
+                  <div>水: {result.wuxingCounts.water}</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* 添加订购按钮 */}
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow p-6 text-center text-white">
+              <h3 className="text-xl font-semibold mb-2">获取详细报告</h3>
+              <p className="mb-4">想要更深入的五行分析和个性化建议？</p>
+              <button 
+                onClick={() => window.location.href = '/order'}
+                className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-200"
+              >
+                立即订购详细报告 ¥99
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -349,7 +396,7 @@ export default function Home() {
       <Script src="https://cdn.jsdelivr.net/npm/chart.js" strategy="beforeInteractive" />
       
       <footer className="text-center text-gray-400 text-sm py-4">
-        版本号：1.0.0 &nbsp;|&nbsp; 日期：2024-06-09
+        版本号：1.0.1 &nbsp;|&nbsp; 日期：2024-12-19
       </footer>
     </div>
   )
