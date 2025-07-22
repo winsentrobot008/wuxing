@@ -328,10 +328,169 @@ function getFemaleLifeAdvice(element) {
 // ==================== 其他核心函数 ====================
 // （包含所有原有的计算函数，如平衡度计算、建议生成、姓名分析等）
 
-// 确保正确导出
-module.exports = {
-    calculateBazi
-};
+/**
+ * 五行平衡分析
+ */
+function analyzeWuxingBalance(wuxingCounts) {
+    const total = Object.values(wuxingCounts).reduce((sum, count) => sum + count, 0);
+    let analysis = "\n🔄 五行平衡分析：\n";
+    
+    for (const [element, count] of Object.entries(wuxingCounts)) {
+        const percentage = ((count / total) * 100).toFixed(1);
+        const status = count === 0 ? '缺失' : count >= 3 ? '偏旺' : count >= 2 ? '适中' : '偏弱';
+        analysis += `${elementNameMap[element]}：${count}个 (${percentage}%) - ${status}\n`;
+    }
+    
+    return analysis;
+}
 
-// 或者使用ES6导出
+/**
+ * 纳音五行分析
+ */
+function generateNayinAnalysis(lunar, noHour) {
+    const nayinTable = {
+        '甲子': '海中金', '乙丑': '海中金', '丙寅': '炉中火', '丁卯': '炉中火',
+        '戊辰': '大林木', '己巳': '大林木', '庚午': '路旁土', '辛未': '路旁土',
+        '壬申': '剑锋金', '癸酉': '剑锋金', '甲戌': '山头火', '乙亥': '山头火'
+        // 简化版纳音表
+    };
+    
+    const eightChar = lunar.getEightChar();
+    const yearPillar = eightChar.getYear();
+    const nayin = nayinTable[yearPillar] || '未知纳音';
+    
+    return {
+        year: nayin,
+        description: `您的年柱纳音为：${nayin}，代表您的先天禀赋和人生基调。`
+    };
+}
+
+/**
+ * 深度分析
+ */
+function performDeepAnalysis(wuxingCounts, gender) {
+    const dominantElement = Object.keys(wuxingCounts).reduce((a, b) => 
+        wuxingCounts[a] > wuxingCounts[b] ? a : b
+    );
+    
+    const advice = generateWuxingAdvice(dominantElement);
+    const detailedAdvice = generateDetailedAdvice(wuxingCounts, gender);
+    const fortune = generateFortunePrediction(dominantElement, gender);
+    
+    return { advice, detailedAdvice, fortune };
+}
+
+/**
+ * 生成五行建议
+ */
+function generateWuxingAdvice(dominantElement) {
+    const adviceMap = {
+        wood: '建议多接触绿色，朝东方发展，从事与木相关的行业。',
+        fire: '建议多接触红色，朝南方发展，从事与火相关的行业。',
+        earth: '建议多接触黄色，居中发展，从事与土相关的行业。',
+        metal: '建议多接触白色，朝西方发展，从事与金相关的行业。',
+        water: '建议多接触黑色，朝北方发展，从事与水相关的行业。'
+    };
+    
+    return adviceMap[dominantElement] || '五行较为平衡，可根据个人喜好发展。';
+}
+
+/**
+ * 生成详细调整建议
+ */
+function generateDetailedAdvice(wuxingCounts, gender) {
+    let advice = '\n📋 详细调整建议：\n';
+    
+    // 找出缺失和过旺的五行
+    const missing = [];
+    const excessive = [];
+    
+    for (const [element, count] of Object.entries(wuxingCounts)) {
+        if (count === 0) missing.push(element);
+        if (count >= 3) excessive.push(element);
+    }
+    
+    if (missing.length > 0) {
+        advice += `缺失五行：${missing.map(e => elementNameMap[e]).join('、')}\n`;
+        advice += '建议通过颜色、方位、职业等方式补充。\n';
+    }
+    
+    if (excessive.length > 0) {
+        advice += `过旺五行：${excessive.map(e => elementNameMap[e]).join('、')}\n`;
+        advice += '建议适当克制，保持平衡。\n';
+    }
+    
+    return advice;
+}
+
+/**
+ * 生成运势预测
+ */
+function generateFortunePrediction(dominantElement, gender) {
+    const predictions = {
+        wood: gender === 'male' ? '事业上有创新突破，财运平稳上升。' : '感情生活和谐，家庭运势良好。',
+        fire: gender === 'male' ? '人际关系活跃，事业发展迅速。' : '魅力四射，桃花运旺盛。',
+        earth: gender === 'male' ? '稳扎稳打，财富积累丰厚。' : '家庭和睦，子女运佳。',
+        metal: gender === 'male' ? '决策果断，领导能力强。' : '品味高雅，贵人运好。',
+        water: gender === 'male' ? '智慧过人，适合策划工作。' : '直觉敏锐，感情细腻。'
+    };
+    
+    return predictions[dominantElement] || '运势平稳，需要主动把握机会。';
+}
+
+/**
+ * 姓名兼容性分析
+ */
+function analyzeNameCompatibility(userName, wuxingCounts) {
+    if (!userName) return null;
+    
+    let nameWuxing = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+    
+    // 分析姓名中每个字的五行
+    for (const char of userName) {
+        const element = characterWuxingMap[char];
+        if (element) {
+            nameWuxing[element]++;
+        }
+    }
+    
+    // 计算兼容性
+    let compatibility = '\n👤 姓名五行分析：\n';
+    compatibility += `姓名：${userName}\n`;
+    
+    for (const [element, count] of Object.entries(nameWuxing)) {
+        if (count > 0) {
+            compatibility += `${elementNameMap[element]}：${count}个字\n`;
+        }
+    }
+    
+    // 简单的兼容性评分
+    const score = calculateCompatibilityScore(wuxingCounts, nameWuxing);
+    compatibility += `\n兼容性评分：${score}/100\n`;
+    
+    return compatibility;
+}
+
+/**
+ * 计算兼容性评分
+ */
+function calculateCompatibilityScore(baziWuxing, nameWuxing) {
+    let score = 50; // 基础分
+    
+    // 如果姓名能补充八字缺失的五行，加分
+    for (const [element, count] of Object.entries(baziWuxing)) {
+        if (count === 0 && nameWuxing[element] > 0) {
+            score += 20; // 补缺加分
+        }
+        if (count >= 3 && nameWuxing[element] === 0) {
+            score += 10; // 避免过旺加分
+        }
+    }
+    
+    return Math.min(100, score);
+}
+
+// ==================== 导出 ====================
+// 使用ES6导出语法（适合Next.js）
+// 文件末尾确保正确导出
 export { calculateBazi };
