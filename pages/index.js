@@ -348,9 +348,13 @@ export default function Home() {
               <h3 className="text-xl font-semibold mb-4">Five Elements Energy Balance Analysis</h3>
               
               {/* 概念解释 */}
-              <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                <h4 className="font-semibold text-blue-800 mb-2">Understanding Five Elements Balance</h4>
-                <p className="text-sm text-blue-700">
+              // 在结果显示区域添加性别标识
+              {result && (
+                <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                  <h4 className="font-semibold text-blue-800">分析基于：{result.gender === 'male' ? '男性' : '女性'}八字特征</h4>
+                </div>
+              )}
+              <p className="text-sm text-blue-700">
                   In traditional Chinese philosophy, optimal health and fortune come from balanced five elements energy. 
                   Each element should ideally represent about 20% (1.6 out of 8 total) of your birth chart. 
                   Imbalances can indicate areas of strength, weakness, or potential challenges in your life path.
