@@ -84,14 +84,25 @@ const characterWuxingMap = {
  */
 function calculateBazi(eightChar, noHour, gender, lunar, userName) {
     try {
+        // 🔍 调试信息：检查函数接收的参数
+        console.log('🔍 unifiedBaziLibrary调试 - 接收到的性别参数：', gender)
+        console.log('🔍 unifiedBaziLibrary调试 - 参数类型：', typeof gender)
+        
         // 计算八字五行分布
         const wuxingCounts = calculateWuxingDistribution(eightChar, noHour);
         
         // 基础分析
         const basicAnalysis = generateBasicAnalysis(wuxingCounts);
         
+        // 🔍 调试信息：调用性别特定分析前
+        console.log('🔍 unifiedBaziLibrary调试 - 调用generateGenderSpecificAnalysis，性别：', gender)
+        
         // 性别特定分析
         const genderAnalysis = generateGenderSpecificAnalysis(wuxingCounts, gender, eightChar);
+        
+        // 🔍 调试信息：检查生成的性别分析内容
+        console.log('🔍 unifiedBaziLibrary调试 - 生成的性别分析长度：', genderAnalysis.length)
+        console.log('🔍 unifiedBaziLibrary调试 - 性别分析内容预览：', genderAnalysis.substring(0, 100))
         
         // 五行平衡分析
         const balanceAnalysis = analyzeWuxingBalance(wuxingCounts);
@@ -109,6 +120,7 @@ function calculateBazi(eightChar, noHour, gender, lunar, userName) {
         return {
             wuxingCounts,
             analysis: basicAnalysis + '\n' + genderAnalysis + '\n' + balanceAnalysis,
+            genderAnalysisDebug: `🔍 性别分析调试: ${gender} - 长度: ${genderAnalysis.length}`, // 🔍 添加调试字段
             nayinTable: nayinAnalysis,
             wuxingAdvice: deepAnalysis.advice,
             detailedAdvice: deepAnalysis.detailedAdvice,
@@ -116,7 +128,7 @@ function calculateBazi(eightChar, noHour, gender, lunar, userName) {
             nameAnalysis
         };
     } catch (error) {
-        console.error('八字计算出错：', error);
+        console.error('❌ 八字计算出错：', error);
         throw new Error(`八字计算失败：${error.message}`);
     }
 }
